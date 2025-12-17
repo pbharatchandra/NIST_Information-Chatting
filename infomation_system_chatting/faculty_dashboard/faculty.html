@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faculty Dashboard - Modern</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans">
+
+    <div class="flex h-screen overflow-hidden">
+
+        <aside class="w-64 bg-slate-900 text-white flex flex-col hidden md:flex">
+            <div class="p-6 text-2xl font-bold tracking-wide text-indigo-400">
+                <i class="fa-solid fa-graduation-cap mr-2"></i> NIS
+            </div>
+            <nav class="flex-1 px-4 space-y-2 mt-4">
+                <a href="#" class="flex items-center p-3 bg-indigo-600 rounded-lg shadow-md transition hover:bg-indigo-700">
+                    <i class="fa-solid fa-table-columns w-6"></i> Dashboard
+                </a>
+                <a href="#" class="flex items-center p-3 hover:bg-slate-800 rounded-lg transition text-slate-300 hover:text-white">
+                    <i class="fa-solid fa-book-open w-6"></i> My Courses
+                </a>
+                <a href="#" class="flex items-center p-3 hover:bg-slate-800 rounded-lg transition text-slate-300 hover:text-white">
+                    <i class="fa-solid fa-users w-6"></i> Students
+                </a>
+                <a href="#" class="flex items-center p-3 hover:bg-slate-800 rounded-lg transition text-slate-300 hover:text-white">
+                    <i class="fa-solid fa-clipboard-check w-6"></i> Attendance
+                </a>
+                <a href="#" class="flex items-center p-3 hover:bg-slate-800 rounded-lg transition text-slate-300 hover:text-white">
+                    <i class="fa-solid fa-calendar-days w-6"></i> Timetable
+                </a>
+            </nav>
+            <div class="p-4 border-t border-slate-700">
+                <a href="#" class="flex items-center text-sm text-slate-400 hover:text-white">
+                    <i class="fa-solid fa-right-from-bracket mr-2"></i> Logout
+                </a>
+            </div>
+        </aside>
+
+        <div class="flex-1 flex flex-col overflow-y-auto">
+            
+            <header class="bg-white shadow-sm h-16 flex items-center justify-between px-8 sticky top-0 z-10">
+                <h2 class="text-xl font-semibold text-gray-700">Welcome back, Dr. Sharma</h2>
+                <div class="flex items-center space-x-6">
+                    <div class="relative cursor-pointer">
+                        <i class="fa-solid fa-bell text-gray-500 text-xl"></i>
+                        <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-4 h-4 flex items-center justify-center rounded-full">3</span>
+                    </div>
+                    <div class="flex items-center space-x-2 cursor-pointer">
+                        <img src="https://ui-avatars.com/api/?name=Dr+Sharma&background=0D8ABC&color=fff" class="w-10 h-10 rounded-full border-2 border-indigo-100" alt="Profile">
+                        <span class="text-sm font-medium hidden sm:block">Dr. A. Sharma</span>
+                    </div>
+                </div>
+            </header>
+
+            <main class="p-8">
+                
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-500 text-sm">Total Students</p>
+                            <h3 class="text-2xl font-bold text-gray-800">142</h3>
+                        </div>
+                        <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600">
+                            <i class="fa-solid fa-user-graduate"></i>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-500 text-sm">Classes Today</p>
+                            <h3 class="text-2xl font-bold text-gray-800">4</h3>
+                        </div>
+                        <div class="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center text-orange-600">
+                            <i class="fa-solid fa-chalkboard-user"></i>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-500 text-sm">Pending Grading</p>
+                            <h3 class="text-2xl font-bold text-gray-800">12</h3>
+                        </div>
+                        <div class="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center text-purple-600">
+                            <i class="fa-solid fa-file-pen"></i>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-500 text-sm">Avg. Attendance</p>
+                            <h3 class="text-2xl font-bold text-green-600">88%</h3>
+                        </div>
+                        <div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center text-green-600">
+                            <i class="fa-solid fa-chart-line"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    
+                    <div class="lg:col-span-2 space-y-8">
+                        
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="text-lg font-bold text-gray-800">Today's Schedule</h3>
+                                <button class="text-sm text-indigo-600 hover:underline">View Calendar</button>
+                            </div>
+                            <div class="space-y-4">
+                                <div class="flex items-start p-4 bg-gray-50 rounded-lg border-l-4 border-indigo-500">
+                                    <div class="w-20 font-bold text-gray-700">09:00 AM</div>
+                                    <div class="ml-4 flex-1">
+                                        <h4 class="font-semibold text-gray-900">Data Structures & Algo</h4>
+                                        <p class="text-sm text-gray-500">CS-201 • Lab 3</p>
+                                    </div>
+                                    <span class="bg-green-100 text-green-700 text-xs px-2 py-1 rounded-full">Ongoing</span>
+                                </div>
+                                <div class="flex items-start p-4 bg-white border border-gray-100 rounded-lg hover:bg-gray-50 transition cursor-pointer">
+                                    <div class="w-20 font-bold text-gray-700">11:30 AM</div>
+                                    <div class="ml-4 flex-1">
+                                        <h4 class="font-semibold text-gray-900">Database Management</h4>
+                                        <p class="text-sm text-gray-500">CS-305 • Room 404</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start p-4 bg-white border border-gray-100 rounded-lg hover:bg-gray-50 transition cursor-pointer">
+                                    <div class="w-20 font-bold text-gray-700">02:00 PM</div>
+                                    <div class="ml-4 flex-1">
+                                        <h4 class="font-semibold text-gray-900">Project Mentoring</h4>
+                                        <p class="text-sm text-gray-500">Final Year • Conf Room</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                            <h3 class="text-lg font-bold text-gray-800 mb-4">Recent Submissions</h3>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left text-sm text-gray-600">
+                                    <thead class="bg-gray-50 text-gray-800 uppercase text-xs font-bold">
+                                        <tr>
+                                            <th class="px-4 py-3">Student</th>
+                                            <th class="px-4 py-3">Subject</th>
+                                            <th class="px-4 py-3">Status</th>
+                                            <th class="px-4 py-3">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-gray-100">
+                                        <tr class="hover:bg-gray-50">
+                                            <td class="px-4 py-3 font-medium">Rahul Verma</td>
+                                            <td class="px-4 py-3">DSA Assignment 3</td>
+                                            <td class="px-4 py-3"><span class="text-orange-500">Pending</span></td>
+                                            <td class="px-4 py-3"><button class="text-indigo-600 hover:text-indigo-800">Grade</button></td>
+                                        </tr>
+                                        <tr class="hover:bg-gray-50">
+                                            <td class="px-4 py-3 font-medium">Priya Das</td>
+                                            <td class="px-4 py-3">DBMS Project</td>
+                                            <td class="px-4 py-3"><span class="text-green-600">Submitted</span></td>
+                                            <td class="px-4 py-3"><button class="text-indigo-600 hover:text-indigo-800">View</button></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-8">
+                        
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                            <h3 class="text-lg font-bold text-gray-800 mb-4">Class Performance</h3>
+                            <canvas id="performanceChart" height="200"></canvas>
+                        </div>
+
+                        <div class="bg-indigo-600 rounded-xl shadow-lg p-6 text-white">
+                            <h3 class="text-lg font-bold mb-4">Quick Actions</h3>
+                            <div class="grid grid-cols-2 gap-4">
+                                <button class="bg-indigo-500 hover:bg-indigo-400 p-3 rounded-lg text-sm text-center transition">
+                                    <i class="fa-solid fa-plus block text-xl mb-1"></i> Assignment
+                                </button>
+                                <button class="bg-indigo-500 hover:bg-indigo-400 p-3 rounded-lg text-sm text-center transition">
+                                    <i class="fa-solid fa-bullhorn block text-xl mb-1"></i> Notice
+                                </button>
+                                <button class="bg-indigo-500 hover:bg-indigo-400 p-3 rounded-lg text-sm text-center transition">
+                                    <i class="fa-solid fa-upload block text-xl mb-1"></i> Material
+                                </button>
+                                <button class="bg-indigo-500 hover:bg-indigo-400 p-3 rounded-lg text-sm text-center transition">
+                                    <i class="fa-solid fa-calendar-check block text-xl mb-1"></i> Leave
+                                </button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        const ctx = document.getElementById('performanceChart').getContext('2d');
+        const myChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['DSA', 'DBMS', 'OS', 'Java'],
+                datasets: [{
+                    label: 'Avg Grade (%)',
+                    data: [75, 82, 68, 88],
+                    backgroundColor: [
+                        'rgba(99, 102, 241, 0.6)',
+                        'rgba(99, 102, 241, 0.6)',
+                        'rgba(99, 102, 241, 0.6)',
+                        'rgba(99, 102, 241, 0.6)'
+                    ],
+                    borderRadius: 5,
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                scales: {
+                    y: { beginAtZero: true, max: 100 }
+                },
+                plugins: {
+                    legend: { display: false }
+                }
+            }
+        });
+        const TIMETABLE_DATA = [
+    { day: "Mon", time: "09:00 - 10:00", subject: "Data Structures", room: "CS-101", type: "Lecture" },
+    { day: "Mon", time: "11:00 - 12:00", subject: "DBMS", room: "Lab-2", type: "Lab" },
+    { day: "Tue", time: "10:00 - 11:00", subject: "Operating Systems", room: "CS-204", type: "Lecture" },
+    { day: "Tue", time: "02:00 - 03:00", subject: "Project Review", room: "Conf Hall", type: "Lab" },
+    { day: "Wed", time: "09:00 - 10:00", subject: "Java Programming", room: "CS-101", type: "Lecture" },
+    { day: "Wed", time: "11:00 - 12:00", subject: "Lunch Break", room: "-", type: "Break" },
+    { day: "Thu", time: "09:00 - 10:00", subject: "Data Structures", room: "CS-101", type: "Lecture" },
+    { day: "Thu", time: "12:00 - 01:00", subject: "Staff Meeting", room: "Admin Block", type: "Lecture" },
+    { day: "Fri", time: "10:00 - 11:00", subject: "Web Dev (Node.js)", room: "Lab-3", type: "Lab" },
+];
+const COURSES_DATA = [
+    { 
+        id: 1, 
+        title: "Data Structures", 
+        code: "CS-201", 
+        semester: "3rd Semester", 
+        students: 45, 
+        progress: 75, 
+        color: "bg-gradient-to-r from-blue-500 to-indigo-600",
+        icon: "fa-solid fa-layer-group"
+    },
+    { 
+        id: 2, 
+        title: "Database Management", 
+        code: "CS-305", 
+        semester: "5th Semester", 
+        students: 38, 
+        progress: 40, 
+        color: "bg-gradient-to-r from-emerald-400 to-teal-600",
+        icon: "fa-solid fa-database"
+    },
+    { 
+        id: 3, 
+        title: "Operating Systems", 
+        code: "CS-204", 
+        semester: "4th Semester", 
+        students: 52, 
+        progress: 60, 
+        color: "bg-gradient-to-r from-orange-400 to-red-500",
+        icon: "fa-solid fa-microchip"
+    },
+    { 
+        id: 4, 
+        title: "Java Programming", 
+        code: "CS-102", 
+        semester: "2nd Semester", 
+        students: 60, 
+        progress: 90, 
+        color: "bg-gradient-to-r from-purple-500 to-pink-600",
+        icon: "fa-brands fa-java"
+    }
+];
+    </script>
+</body>
+</html>
+  <a href="password.html">
+                <span class="material-icons-sharp">password</span>
+                <h3>Change Password</h3>

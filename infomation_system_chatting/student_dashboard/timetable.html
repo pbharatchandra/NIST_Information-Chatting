@@ -1,0 +1,216 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp" rel="stylesheet">
+    <link rel="shortcut icon" href="./images/logo.png">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <img src="./images/logo.png" alt="">
+            <h2>U<span class="danger">M</span>S</h2>
+        </div>
+        <div class="navbar">
+            <a href="index.html">
+                <span class="material-icons-sharp">home</span>
+                <h3>Home</h3>
+            </a>
+            <a href="timetable.html" class="active" onclick="timeTableAll()">
+                <span class="material-icons-sharp">today</span>
+                <h3>Time Table</h3>
+            </a> 
+            <a href="exam.html">
+                <span class="material-icons-sharp">grid_view</span>
+                <h3>Examination</h3>
+            </a>
+            <a href="password.html">
+                <span class="material-icons-sharp">password</span>
+                <h3>Change Password</h3>
+            </a>
+            <a href="#">
+                <span class="material-icons-sharp">logout</span>
+                <h3>Logout</h3>
+            </a>
+        </div>
+        <div id="profile-btn" style="display: none;">
+            <span class="material-icons-sharp">person</span>
+        </div>
+        <div class="theme-toggler">
+            <span class="material-icons-sharp active">light_mode</span>
+            <span class="material-icons-sharp">dark_mode</span>
+        </div>
+        
+    </header>
+
+    <main style="margin: 0;">
+        <div class="timetable active" id="timetable">
+            <div>
+                <span id="prevDay">&lt;</span>
+                <h2>Today's Timetable</h2>
+                <span id="nextDay">&gt;</span>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Time</th>
+                        <th>Room No.</th>
+                        <th>Subject</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </main>
+
+</body>
+
+<script src="timeTable.js"></script>
+<script src="app.js"></script>
+</html> -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NIS Dashboard - Time Table</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        
+        <aside>
+            <div class="sidebar-profile">
+                <div class="profile-photo">
+                    <img src="./images/profile-1.jpg" alt="Profile">
+                </div>
+                <div class="profile-info">
+                    <p>Hey, <b>Chinmaya</b></p>
+                    <small class="text-muted">12102030</small>
+                </div>
+            </div>
+            <div class="about-section">
+                <div class="detail-box"><h5>Course</h5><p>BTech. IT</p></div>
+                <div class="detail-box"><h5>DOB</h5><p>29-Feb-2020</p></div>
+                <div class="detail-box"><h5>Contact</h5><p>1234567890</p></div>
+            </div>
+        </aside>
+
+        <main>
+            <header>
+                <div class="navbar">
+                    <a href="index.html">
+                        <span class="material-icons-sharp">home</span><h3>Home</h3>
+                    </a>
+                    <a href="timetable.html" class="active">
+                        <span class="material-icons-sharp">calendar_today</span><h3>Time Table</h3>
+                    </a>
+                    <a href="exam.html">
+                        <span class="material-icons-sharp">grid_view</span><h3>Examination</h3>
+                    </a>
+                    <a href="password.html">
+                        <span class="material-icons-sharp">password</span><h3>Password</h3>
+                    </a>
+                    <a href="#">
+                        <span class="material-icons-sharp">logout</span><h3>Logout</h3>
+                    </a>
+                </div>
+                <div class="theme-toggler">
+                    <span class="material-icons-sharp active">light_mode</span>
+                    <span class="material-icons-sharp">dark_mode</span>
+                </div>
+            </header>
+
+            <h1>Today's Timetable</h1>
+            <br>
+            <table class="styled-table">
+                <thead>
+                    <tr>
+                        <th>Time</th>
+                        <th>Room No.</th>
+                        <th>Subject</th>
+                        <th>Type</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>09:00 - 10:00 AM</td>
+                        <td>Lab-3</td>
+                        <td>Data Structures</td>
+                        <td>Lab</td>
+                    </tr>
+                    <tr>
+                        <td>10:00 - 11:00 AM</td>
+                        <td>Room 304</td>
+                        <td>Web Technology</td>
+                        <td>Lecture</td>
+                    </tr>
+                    <tr>
+                        <td>01:00 - 02:00 PM</td>
+                        <td>Room 201</td>
+                        <td>Compiler Design</td>
+                        <td>Lecture</td>
+                    </tr>
+                     <tr>
+                        <td>03:00 - 05:00 PM</td>
+                        <td>Auditorium</td>
+                        <td>Soft Skills</td>
+                        <td>Workshop</td>
+                    </tr>
+                </tbody>
+            </table>
+        </main>
+
+        <div class="right">
+            <div class="announcements">
+                <h2>Announcements</h2>
+                <div class="updates">
+                    <div class="message">
+                        <p><b>Academic</b> Summer training internship.</p>
+                        <small class="text-muted">2 Minutes Ago</small>
+                    </div>
+                    <div class="message">
+                        <p><b>Exam</b> Mid Term Instructions.</p>
+                        <small class="text-muted">Yesterday</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dues-section">
+                <h2>View Dues</h2>
+                <div class="dues-card">
+                    <table class="dues-table">
+                        <thead>
+                            <tr>
+                                <th>Debit</th>
+                                <th>Credit</th>
+                                <th>Pending</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>$5000</td>
+                                <td>$2000</td>
+                                <td class="danger">$3000</td>
+                            </tr>
+                            <tr>
+                                <td>$1200</td>
+                                <td>$1200</td>
+                                <td class="success">0</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>
