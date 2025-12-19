@@ -52,6 +52,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const themeToggle = document.getElementById("theme-toggle");
 
+  // Chat elements
+  const chatMessages = document.getElementById("chat-messages");
+  const chatForm = document.getElementById("chat-form");
+  const chatInput = document.getElementById("chat-input");
+  const chatClear = document.getElementById("chat-clear");
+
   /* Navigation between sections */
   sectionButtons.forEach((btn) => {
     btn.addEventListener("click", () => {
@@ -76,9 +82,9 @@ document.addEventListener("DOMContentLoaded", () => {
       const div = document.createElement("div");
       div.className = "notif-item";
       div.innerHTML = `
-        <p class="tag ${n.type}">${n.tag}</p>
-        <p class="text">${n.text}</p>
-        <p class="time"><i class="fa-regular fa-clock"></i> ${n.time}</p>
+        <div class="tag ${n.type}">${n.tag}</div>
+        <div class="text">${n.text}</div>
+        <div class="time">${n.time}</div>
       `;
       notifList.appendChild(div);
     });
@@ -120,8 +126,8 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  attendanceSearch.addEventListener("input", (e) => {
-    const q = e.target.value.toLowerCase().trim();
+  attendanceSearch?.addEventListener("input", (e) => {
+    const q = e.target.value.toLowerCase();
     const filtered = students.filter(
       (s) =>
         s.name.toLowerCase().includes(q) || s.roll.toLowerCase().includes(q)
@@ -129,12 +135,54 @@ document.addEventListener("DOMContentLoaded", () => {
     renderStudents(filtered);
   });
 
-  /* Simple theme toggle (optional – just add/remove a dark class if needed) */
+  /* Theme toggle */
   themeToggle.addEventListener("click", () => {
-    document.body.classList.toggle("dark-mode");
+    document.body.classList.toggle("dark");
   });
 
-  /* Initial render */
+  /* Chat logic */
+  function addMessage(text, sender = "me") {
+    if (!text.trim()) return;
+
+    const wrapper = document.createElement("div");
+    wrapper.className = `chat-message ${sender}`;
+    const time = new Date().toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+
+    wrapper.innerHTML = `
+      <div class="chat-text">${text}</div>
+      <div class="chat-meta">${sender === "me" ? "You" : "CR"} • ${time}</div>
+    `;
+    chatMessages.appendChild(wrapper);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  }
+
+  chatForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const value = chatInput.value.trim();
+    if (!value) return;
+
+    addMessage(value, "me");
+
+    // Optional auto-reply (demo)
+    setTimeout(() => {
+      addMessage("Noted, ma'am. Will inform the batch.", "other");
+    }, 800);
+
+    chatInput.value = "";
+  });
+
+  chatClear.addEventListener("click", () => {
+    chatMessages.innerHTML = "";
+  });
+
+  /* Initial renders */
   renderNotifications();
   renderStudents(students);
+
+  // Seed chat with a sample conversation
+  addMessage("Good morning, please remind students to submit DBMS assignment.", "me");
+  addMessage("Sure ma'am, will broadcast it on the group.", "other");
 });
