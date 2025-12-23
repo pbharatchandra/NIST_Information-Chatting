@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Faculty Portal</title>
+  <link rel="stylesheet" href="faculty.css" />
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+  />
+</head>
+<body>
+  <div class="layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="logo-icon">
+          <i class="fa-solid fa-graduation-cap"></i>
+        </div>
+        <div>
+          <div class="app-title">Faculty Console</div>
+          <div class="app-subtitle">NIST Portal</div>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <button class="nav-link active" data-section="dashboard">
+          <i class="fa-solid fa-gauge-high"></i>
+          <span>Dashboard</span>
+        </button>
+        <button class="nav-link" data-section="courses">
+          <i class="fa-solid fa-book-open"></i>
+          <span>Courses</span>
+        </button>
+        <button class="nav-link" data-section="attendance">
+          <i class="fa-solid fa-user-check"></i>
+          <span>Attendance</span>
+        </button>
+        <button class="nav-link" data-section="gradebook">
+          <i class="fa-solid fa-clipboard-list"></i>
+          <span>Gradebook</span>
+        </button>
+        <button class="nav-link" data-section="settings">
+          <i class="fa-solid fa-gear"></i>
+          <span>Settings</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="profile">
+          <div class="profile-photo">
+            <img
+              src="https://i.pravatar.cc/80?img=56"
+              alt="Faculty"
+            />
+          </div>
+          <div>
+            <div class="profile-name">Dr. Ananya Rao</div>
+            <div class="profile-role">Assistant Professor, CSE</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main -->
+    <main class="main">
+      <header class="main-header">
+        <div>
+          <h1 id="header-title">Dashboard</h1>
+          <p class="header-subtitle">
+            Quick snapshot of your classes, students and pending actions.
+          </p>
+        </div>
+        <div class="header-actions">
+          <button id="theme-toggle" class="theme-toggle" title="Toggle theme">
+            <i class="fa-solid fa-moon"></i>
+          </button>
+
+          <button id="notif-btn" class="notif-btn" title="Notifications">
+            <i class="fa-regular fa-bell"></i>
+            <span id="notif-count" class="notif-badge">0</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- Two-column main: left (sections) + right (chat) -->
+      <div class="main-grid">
+        <div class="main-sections">
+          <!-- Dashboard -->
+          <section id="dashboard" class="section active">
+            <div class="grid-4">
+              <div class="stat-card">
+                <p>Total Students</p>
+                <h3>142</h3>
+              </div>
+              <div class="stat-card">
+                <p>Classes Today</p>
+                <h3>4</h3>
+              </div>
+              <div class="stat-card">
+                <p>Pending Grades</p>
+                <h3>28</h3>
+              </div>
+              <div class="stat-card stat-success">
+                <p>Avg Attendance</p>
+                <h3>92%</h3>
+              </div>
+            </div>
+
+            <div class="grid-2">
+              <div class="card">
+                <div class="card-header">
+                  <h3>Today’s Schedule</h3>
+                </div>
+                <ul class="schedule-list">
+                  <li>
+                    <div class="time">09:00–10:00</div>
+                    <div>
+                      <div class="title">CS-201: DBMS</div>
+                      <div class="meta">B.Tech IT, Room 304</div>
+                    </div>
+                  </li>
+                  <li>
+                    <div class="time">11:00–12:00</div>
+                    <div>
+                      <div class="title">CS-305: Web Tech</div>
+                      <div class="meta">B.Tech CSE, Lab 2</div>
+                    </div>
+                  </li>
+                  <li>
+                    <div class="time">14:00–15:00</div>
+                    <div>
+                      <div class="title">CS-410: Project Review</div>
+                      <div class="meta">Final year, Project Lab</div>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+
+              <div class="card">
+                <div class="card-header">
+                  <h3>Batch Performance</h3>
+                </div>
+                <ul class="performance-list">
+                  <li>
+                    <span class="label">CS-201</span>
+                    <div class="bar">
+                      <div class="bar-fill" style="width: 84%"></div>
+                    </div>
+                    <span class="value">84%</span>
+                  </li>
+                  <li>
+                    <span class="label">CS-305</span>
+                    <div class="bar">
+                      <div class="bar-fill" style="width: 78%"></div>
+                    </div>
+                    <span class="value">78%</span>
+                  </li>
+                  <li>
+                    <span class="label">CS-410</span>
+                    <div class="bar">
+                      <div class="bar-fill" style="width: 91%"></div>
+                    </div>
+                    <span class="value">91%</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </section>
+
+          <!-- Courses -->
+          <section id="courses" class="section">
+            <div class="card">
+              <div class="card-header">
+                <h3>Assigned Courses</h3>
+              </div>
+              <div class="grid-3">
+                <div class="card course-card">
+                  <div class="course-code">CS-201</div>
+                  <h4>Database Management Systems</h4>
+                  <p class="meta">Semester 3 · 56 students</p>
+                </div>
+                <div class="card course-card">
+                  <div class="course-code">CS-305</div>
+                  <h4>Web Technologies</h4>
+                  <p class="meta">Semester 5 · 48 students</p>
+                </div>
+                <div class="card course-card">
+                  <div class="course-code">CS-410</div>
+                  <h4>Software Project</h4>
+                  <p class="meta">Final Year · 38 students</p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Attendance -->
+          <section id="attendance" class="section">
+            <div class="card">
+              <div class="card-header">
+                <h3>Mark Attendance</h3>
+                <div class="search-box">
+                  <i class="fa-solid fa-magnifying-glass"></i>
+                  <input
+                    id="attendance-search"
+                    type="text"
+                    placeholder="Search by name or roll..."
+                  />
+                </div>
+              </div>
+              <div class="table-wrapper">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Roll</th>
+                      <th class="center">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody id="attendance-body"></tbody>
+                </table>
+              </div>
+            </div>
+          </section>
+
+          <!-- Gradebook -->
+          <section id="gradebook" class="section">
+            <div class="card center-card">
+              <div class="icon-circle">
+                <i class="fa-solid fa-file-pen"></i>
+              </div>
+              <h3>Gradebook</h3>
+              <p>
+                View and update internal and external marks for all assigned
+                courses.
+              </p>
+              <button class="primary-btn">
+                Open Gradebook
+              </button>
+            </div>
+          </section>
+
+          <!-- Settings -->
+          <section id="settings" class="section">
+            <div class="card">
+              <h3>Settings</h3>
+              <p style="margin-top: 0.5rem; font-size: 0.9rem">
+                Configure notification preferences, theme and profile details.
+              </p>
+            </div>
+          </section>
+        </div>
+
+        <!-- Chat panel -->
+        <aside class="chat-panel">
+          <div class="chat-header">
+            <div>
+              <h3>Faculty Chat</h3>
+              <p class="chat-subtitle">
+                Quick notes with students or CRs.
+              </p>
+            </div>
+            <button id="chat-clear" class="chat-clear-btn" title="Clear chat">
+              <i class="fa-solid fa-trash"></i>
+            </button>
+          </div>
+
+          <div id="chat-messages" class="chat-messages">
+            <!-- Messages injected by JS -->
+          </div>
+
+          <form id="chat-form" class="chat-input-row">
+            <input
+              id="chat-input"
+              type="text"
+              placeholder="Type a message and press Enter..."
+              autocomplete="off"
+            />
+            <button type="submit" class="chat-send-btn">
+              <i class="fa-solid fa-paper-plane"></i>
+            </button>
+          </form>
+        </aside>
+      </div>
+    </main>
+  </div>
+
+  <!-- Notification panel -->
+  <div id="notif-panel" class="notif-panel">
+    <div class="notif-header">
+      <h3>Notifications</h3>
+      <button id="notif-close" class="notif-close">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+    <div id="notif-list" class="notif-list"></div>
+  </div>
+  <div id="notif-overlay" class="notif-overlay"></div>
+
+  <script src="faculty.js"></script>
+</body>
+</html>

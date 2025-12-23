@@ -3,7 +3,7 @@
 # /node_modules/
 # /package.json
 # /.env
-# **/node_modules
+# /node_modules will ignore all files inside the node_modules directory
 node_modules/
 .env
 dist/

@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NIS Dashboard - Exams</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        
+        <aside>
+            <div class="sidebar-profile">
+                <div class="profile-photo">
+                    <img src="./images/profile-1.jpg" alt="Profile">
+                </div>
+                <div class="profile-info">
+                    <p>Hey, <b>Chinmaya</b></p>
+                    <small class="text-muted">12102030</small>
+                </div>
+            </div>
+            <div class="about-section">
+                <div class="detail-box"><h5>Course</h5><p>BTech. IT</p></div>
+                <div class="detail-box"><h5>DOB</h5><p>29-Feb-2020</p></div>
+                <div class="detail-box"><h5>Contact</h5><p>1234567890</p></div>
+            </div>
+        </aside>
+
+        <main>
+            <header>
+                <div class="navbar">
+                    <a href="index.html">
+                        <span class="material-icons-sharp">home</span><h3>Home</h3>
+                    </a>
+                    <a href="timetable.html">
+                        <span class="material-icons-sharp">calendar_today</span><h3>Time Table</h3>
+                    </a>
+                    <a href="exam.html" class="active">
+                        <span class="material-icons-sharp">grid_view</span><h3>Examination</h3>
+                    </a>
+                    <a href="password.html">
+                        <span class="material-icons-sharp">password</span><h3>Password</h3>
+                    </a>
+                    <a href="logout.html">
+                        <span class="material-icons-sharp">logout</span><h3>Logout</h3>
+                    </a>
+                </div>
+                <div class="theme-toggler">
+                    <span class="material-icons-sharp active">light_mode</span>
+                    <span class="material-icons-sharp">dark_mode</span>
+                </div>
+            </header>
+
+            <h1>Upcoming Examinations</h1>
+            <br>
+            <table class="styled-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Subject Code</th>
+                        <th>Room No.</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>15 May 2025</td>
+                        <td>09:00 AM</td>
+                        <td>CS-201</td>
+                        <td>Hall A</td>
+                    </tr>
+                    <tr>
+                        <td>18 May 2025</td>
+                        <td>09:00 AM</td>
+                        <td>CS-304</td>
+                        <td>Hall B</td>
+                    </tr>
+                    <tr>
+                        <td>22 May 2025</td>
+                        <td>09:00 AM</td>
+                        <td>MTH-102</td>
+                        <td>Hall A</td>
+                    </tr>
+                </tbody>
+            </table>
+        </main>
+
+        <div class="right">
+            <div class="announcements">
+                <h2>Announcements</h2>
+                <div class="updates">
+                    <div class="message">
+                        <p><b>Academic</b> Summer training internship.</p>
+                        <small class="text-muted">2 Minutes Ago</small>
+                    </div>
+                    <div class="message">
+                        <p><b>Exam</b> Mid Term Instructions.</p>
+                        <small class="text-muted">Yesterday</small>
+                    </div>
+                </div>
+            </div>
+             <div class="dues-section">
+                <h2>View Dues</h2>
+                <div class="dues-card">
+                    <table class="dues-table">
+                        <thead>
+                            <tr>
+                                <th>Debit</th>
+                                <th>Credit</th>
+                                <th>Pending</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>$5000</td>
+                                <td>$2000</td>
+                                <td class="danger">$3000</td>
+                            </tr>
+                            <tr>
+                                <td>$1200</td>
+                                <td>$1200</td>
+                                <td class="success">0</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>

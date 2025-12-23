@@ -1,0 +1,219 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NIS Dashboard - Home</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        
+        <aside>
+            <div class="top">
+                <div class="logo">
+                    <img src="./images/Nist.berhampur.logo.jpg" alt="">
+                    <h2>NIS</h2>
+                </div>
+                <div class="close" id="close-btn">
+                    <span class="material-icons-sharp">close</span>
+                </div>
+            </div>
+
+            <div class="sidebar-profile">
+                <div class="profile-photo">
+                    <img src="./images/chinu.jpg" alt="Profile">
+                </div>
+                <div class="profile-info">
+                    <p>Hey, <b>Chinmaya</b></p>
+                    <small class="text-muted">12102030</small>
+                </div>
+            </div>
+            <div class="about-section">
+                <div class="detail-box"><h5>Course</h5><p>BTech. IT</p></div>
+                <div class="detail-box"><h5>DOB</h5><p>29-Feb-2020</p></div>
+                <div class="detail-box"><h5>Contact</h5><p>1234567890</p></div>
+            </div>
+
+            <div class="sidebar-footer">
+                <a href="#" class="btn-open-chat">
+                    <span class="material-icons-sharp">chat</span>
+                    <h3>Open Chat</h3>
+                </a>
+            </div>
+        </aside>
+
+        <main>
+            <header>
+                <button id="menu-btn">
+                    <span class="material-icons-sharp">menu</span>
+                </button>
+
+                <div class="navbar">
+                    <a href="index.html" class="active">
+                        <span class="material-icons-sharp">home</span><h3>Home</h3>
+                    </a>
+                    <a href="timetable.html">
+                        <span class="material-icons-sharp">calendar_today</span><h3>Time Table</h3>
+                    </a>
+                    <a href="exam.html">
+                        <span class="material-icons-sharp">grid_view</span><h3>Exam</h3>
+                    </a>
+                    <a href="password.html">
+                        <span class="material-icons-sharp">password</span><h3>Password</h3>
+                    </a>
+                    <a href="logout.html">
+                        <span class="material-icons-sharp">logout</span><h3>Logout</h3>
+                    </a>
+                </div>
+                <div class="theme-toggler">
+                    <span class="material-icons-sharp active">light_mode</span>
+                    <span class="material-icons-sharp">dark_mode</span>
+                </div>
+            </header>
+
+           <h1>Attendance</h1>
+            <div class="subjects">
+                <div class="eg">
+                    <span class="material-icons-sharp">biotech</span>
+                    <h3>Biology</h3>
+                    <h2>12/14</h2>
+                    <div class="progress">
+                        <svg><circle cx="38" cy="38" r="36" style="stroke-dashoffset: 15;"></circle></svg>
+                        <div class="number"><p>86%</p></div>
+                    </div>
+                </div>
+                <div class="mth">
+                    <span class="material-icons-sharp">language</span>
+                    <h3>Web Tech</h3>
+                    <h2>27/29</h2>
+                    <div class="progress">
+                        <svg><circle cx="38" cy="38" r="36" style="stroke-dashoffset: 8; stroke: var(--color-danger);"></circle></svg>
+                        <div class="number"><p>93%</p></div>
+                    </div>
+                </div>
+                <div class="cs">
+                    <span class="material-icons-sharp">code</span>
+                    <h3>Compiler Design</h3>
+                    <h2>27/30</h2>
+                    <div class="progress">
+                        <svg><circle cx="38" cy="38" r="36" style="stroke-dashoffset: 11; stroke: var(--color-success);"></circle></svg>
+                        <div class="number"><p>90%</p></div>
+                    </div>
+                </div>
+                <div class="cg">
+                    <span class="material-icons-sharp">integration_instructions</span>
+                    <h3>Software Project</h3>
+                    <h2>24/25</h2>
+                    <div class="progress">
+                        <svg><circle cx="38" cy="38" r="36" style="stroke-dashoffset: 4; stroke: var(--color-warning);"></circle></svg>
+                        <div class="number"><p>96%</p></div>
+                    </div>
+                </div>
+            </div>
+            <div class="bottom-section">
+                <div class="internal-marks">
+                    <h2>Internal Marks</h2>
+                    <div class="marks-list">
+                        <div class="mark-item"><span class="subject-name">Biology</span><span class="score-badge">40.15 / 50</span></div>
+                        <div class="mark-item"><span class="subject-name">Web Tech</span><span class="score-badge">42.00 / 50</span></div>
+                        <div class="mark-item"><span class="subject-name">Compiler Design</span><span class="score-badge">38.50 / 50</span></div>
+                        <div class="mark-item"><span class="subject-name">Software Project</span><span class="score-badge">45.00 / 50</span></div>
+                    </div>
+                </div>
+                <div class="back-papers">
+                    <h2>Back Papers</h2>
+                    <div class="empty-state" style="text-align:center; padding:2rem;">
+                        <span class="material-icons-sharp" style="font-size:3rem; color:var(--color-success);">check_circle</span>
+                        <p>No Back Papers</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <div class="right">
+            <div class="announcements">
+                <h2>Announcements</h2>
+                <div class="updates">
+                    <div class="message">
+                        <p><b>Academic</b> Summer training internship.</p>
+                        <small class="text-muted">2 Minutes Ago</small>
+                    </div>
+                    <div class="message">
+                        <p><b>Exam</b> Mid Term Instructions.</p>
+                        <small class="text-muted">Yesterday</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dues-section">
+                <h2>View Dues</h2>
+                <div class="dues-card">
+                    <table class="dues-table">
+                        <thead>
+                            <tr>
+                                <th>Debit</th>
+                                <th>Credit</th>
+                                <th>Pending</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>$5000</td>
+                                <td>$2000</td>
+                                <td class="danger">$3000</td>
+                            </tr>
+                            <tr>
+                                <td>$1200</td>
+                                <td>$1200</td>
+                                <td class="success">0</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+         <div class="notes-section">
+                <h2>My Quick Notes</h2>
+                <div class="notes-card">
+                    
+                    <div class="add-note">
+                        <input type="text" placeholder="Write a new note...">
+                        <button>
+                            <span class="material-icons-sharp">add</span>
+                        </button>
+                    </div>
+
+                    <div class="notes-list">
+                        
+                        <div class="note-item">
+                            <span class="material-icons-sharp">assignment</span>
+                            <p>Submit DBMS Project</p>
+                        </div>
+
+                        <div class="note-item">
+                            <span class="material-icons-sharp">schedule</span>
+                            <p>Meeting with HOD at 2 PM</p>
+                        </div>
+                        
+                        <div class="note-item">
+                            <span class="material-icons-sharp">menu_book</span>
+                            <p>Return Library Book (C++)</p>
+                        </div>
+
+                         <div class="note-item">
+                            <span class="material-icons-sharp">task_alt</span>
+                            <p>Register for Hackathon</p>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>
