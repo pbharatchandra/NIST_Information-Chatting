@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - NIST Professional Network</title>
+    <link rel="stylesheet" href="modern-style.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h2>NIST</h2>
+                <div class="sidebar-actions">
+                    <button class="icon-btn" onclick="goToDashboard()" title="Back to Chat">💬</button>
+                    <button class="icon-btn" onclick="logout()" title="Logout">🚪</button>
+                </div>
+            </div>
+
+            <div class="search-box">
+                <input type="text" id="userSearch" placeholder="Search users...">
+            </div>
+
+            <div class="conversations-list" id="usersList">
+                <!-- Users list will be populated here -->
+            </div>
+        </div>
+
+        <!-- Profile Content -->
+        <div class="chat-area">
+            <div class="profile-content">
+                <!-- Profile Header -->
+                <div class="profile-header">
+                    <div class="profile-avatar" id="profileAvatar">-</div>
+                    <div class="profile-name" id="profileName">Loading...</div>
+                    <div class="profile-role" id="profileRole">-</div>
+                    <div style="margin-top: 8px; font-size: 14px; color: #075E54; font-weight: 500;">
+                        Roll Number: <span id="profileRollNumber">-</span>
+                    </div>
+                    <div style="margin-top: 16px; font-size: 13px; color: #54656F;">
+                        Last updated: <span id="lastUpdated">Today</span>
+                    </div>
+                </div>
+
+                <!-- Profile Form -->
+                <form class="profile-form" id="profileForm">
+                    <!-- Basic Info -->
+                    <div class="form-section">
+                        <h3>👤 Basic Information</h3>
+                        <div class="form-row">
+                            <div class="form-input-group">
+                                <label>Full Name</label>
+                                <input type="text" id="fullName" placeholder="Your full name" required>
+                            </div>
+                            <div class="form-input-group">
+                                <label>Roll Number (ID)</label>
+                                <input type="text" id="rollNumberBasic" placeholder="Your unique ID" readonly style="background: #F5F5F5;">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-input-group">
+                                <label>Email</label>
+                                <input type="email" id="email" placeholder="your@email.com" readonly style="background: #F5F5F5;">
+                            </div>
+                            <div class="form-input-group">
+                                <label>Phone Number</label>
+                                <input type="tel" id="phone" placeholder="+91 XXXXX XXXXX">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-input-group">
+                                <label>Location</label>
+                                <input type="text" id="location" placeholder="City, Country">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Professional Info -->
+                    <div class="form-section">
+                        <h3>🎓 Professional Information</h3>
+                        <div class="form-row full">
+                            <div class="form-input-group">
+                                <label>Department/Subject</label>
+                                <input type="text" id="department" placeholder="e.g., Computer Science, Physics">
+                            </div>
+                        </div>
+                        <div class="form-row full">
+                            <div class="form-input-group">
+                                <label>Bio</label>
+                                <textarea id="bio" placeholder="Tell about yourself, your interests, expertise..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- For Faculty -->
+                    <div class="form-section" id="facultySection" style="display: none;">
+                        <h3>📚 Faculty Information</h3>
+                        <div class="form-row full">
+                            <div class="form-input-group">
+                                <label>Qualifications</label>
+                                <textarea id="qualifications" placeholder="e.g., M.Tech, Ph.D., Certifications..."></textarea>
+                            </div>
+                        </div>
+                        <div class="form-row full">
+                            <div class="form-input-group">
+                                <label>Research Interests</label>
+                                <textarea id="researchInterests" placeholder="Your research areas and interests..."></textarea>
+                            </div>
+                        </div>
+                        <div class="form-row full">
+                            <div class="form-input-group">
+                                <label>Office Hours</label>
+                                <input type="text" id="officeHours" placeholder="e.g., Monday 2-4 PM, Wednesday 3-5 PM">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- For Students/Alumni -->
+                    <div class="form-section" id="studentSection" style="display: none;">
+                        <h3>🎯 Academic & Career Information</h3>
+                        <div class="form-row">
+                            <div class="form-input-group">
+                                <label>Batch/Year</label>
+                                <input type="text" id="batch" placeholder="e.g., 2024-2025">
+                            </div>
+                            <div class="form-input-group">
+                                <label>Skills</label>
+                                <input type="text" id="skillsField" placeholder="e.g., Python, Web Development...">
+                            </div>
+                        </div>
+                        <div class="form-row full" id="alumniSection" style="display: none;">
+                            <div class="form-input-group">
+                                <label>Current Company/Organization</label>
+                                <input type="text" id="currentCompany" placeholder="Where are you working?">
+                            </div>
+                        </div>
+                        <div class="form-row full" id="alumniSection2" style="display: none;">
+                            <div class="form-input-group">
+                                <label>Job Title/Position</label>
+                                <input type="text" id="jobTitle" placeholder="Your position">
+                            </div>
+                        </div>
+                        <div class="form-row full" id="alumniSection3" style="display: none;">
+                            <div class="form-input-group">
+                                <label>LinkedIn Profile</label>
+                                <input type="url" id="linkedin" placeholder="https://linkedin.com/in/yourprofile">
+                            </div>
+                        </div>
+                        <div class="form-row full" id="alumniSection4" style="display: none;">
+                            <div class="form-input-group">
+                                <label>Open to Job Referrals?</label>
+                                <div style="display: flex; gap: 20px; margin-top: 8px;">
+                                    <label style="display: flex; align-items: center; gap: 8px; font-weight: 400;">
+                                        <input type="radio" name="openToReferrals" value="yes"> Yes, I'm interested
+                                    </label>
+                                    <label style="display: flex; align-items: center; gap: 8px; font-weight: 400;">
+                                        <input type="radio" name="openToReferrals" value="no"> No, not now
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Social Links -->
+                    <div class="form-section">
+                        <h3>🔗 Social Links (Optional)</h3>
+                        <div class="form-row full">
+                            <div class="form-input-group">
+                                <label>GitHub Profile</label>
+                                <input type="url" id="github" placeholder="https://github.com/yourprofile">
+                            </div>
+                        </div>
+                        <div class="form-row full">
+                            <div class="form-input-group">
+                                <label>Portfolio/Website</label>
+                                <input type="url" id="portfolio" placeholder="https://yourportfolio.com">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="profile-actions">
+                        <button type="submit" class="btn btn-primary">💾 Save Changes</button>
+                        <button type="button" class="btn btn-secondary" onclick="goToDashboard()">← Back to Chat</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Profile Modal -->
+    <div class="modal" id="userProfileModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Profile</h2>
+                <button class="modal-close" onclick="closeUserProfile()">✕</button>
+            </div>
+            <div id="userProfileContent"></div>
+        </div>
+    </div>
+
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+    <script>
+        // Get user from localStorage
+        const user = JSON.parse(localStorage.getItem('user'));
+        const token = localStorage.getItem('token');
+        const API_URL = 'http://localhost:3001';
+
+        if (!user || !token) {
+            window.location.href = '/login.html';
+        }
+
+        // Initialize
+        window.addEventListener('load', async () => {
+            // Show appropriate form sections
+            const facultySection = document.getElementById('facultySection');
+            const studentSection = document.getElementById('studentSection');
+            const alumniSections = document.querySelectorAll('[id^="alumniSection"]');
+
+            // Set roll number display from localStorage immediately
+            document.getElementById('profileRollNumber').textContent = user.roll_number || '-';
+            document.getElementById('rollNumberBasic').value = user.roll_number || '';
+            
+            // Populate header from localStorage immediately
+            document.getElementById('fullName').value = user.full_name || '';
+            document.getElementById('email').value = user.email || '';
+            updateProfileHeader();
+
+            if (user.user_type === 'faculty') {
+                facultySection.style.display = 'block';
+                studentSection.style.display = 'none';
+            } else if (user.user_type === 'alumni') {
+                facultySection.style.display = 'none';
+                studentSection.style.display = 'block';
+                // Show alumni sections for alumni users
+                alumniSections.forEach(el => el.style.display = 'block');
+            } else {
+                // Student
+                facultySection.style.display = 'none';
+                studentSection.style.display = 'block';
+                // Hide alumni sections for students
+                alumniSections.forEach(el => el.style.display = 'none');
+            }
+
+            // Load user profile data from API (will override localStorage if successful)
+            await loadProfileData();
+            // Load users list
+            await loadUsersList();
+        });
+
+        async function loadProfileData() {
+            try {
+                const response = await fetch(`${API_URL}/api/profile`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (!response.ok) {
+                    // If endpoint doesn't exist yet, data already loaded from localStorage
+                    return;
+                }
+
+                const profile = await response.json();
+                document.getElementById('fullName').value = profile.full_name || user.full_name || '';
+                document.getElementById('email').value = profile.email || user.email || '';
+                document.getElementById('phone').value = profile.phone || '';
+                document.getElementById('location').value = profile.location || '';
+                document.getElementById('bio').value = profile.bio || '';
+                document.getElementById('github').value = profile.github || '';
+                document.getElementById('portfolio').value = profile.portfolio || '';
+
+                if (user.user_type === 'faculty') {
+                    document.getElementById('department').value = profile.department || '';
+                    document.getElementById('qualifications').value = profile.qualifications || '';
+                    document.getElementById('researchInterests').value = profile.research_interests || '';
+                    document.getElementById('officeHours').value = profile.office_hours || '';
+                } else {
+                    document.getElementById('batch').value = profile.batch || '';
+                    document.getElementById('skillsField').value = profile.skills || '';
+                    if (user.user_type === 'alumni') {
+                        document.getElementById('currentCompany').value = profile.current_company || '';
+                        document.getElementById('jobTitle').value = profile.job_title || '';
+                        document.getElementById('linkedin').value = profile.linkedin || '';
+                        const openToReferrals = profile.open_to_referrals ? 'yes' : 'no';
+                        const radioBtn = document.querySelector(`input[name="openToReferrals"][value="${openToReferrals}"]`);
+                        if (radioBtn) {
+                            radioBtn.checked = true;
+                        }
+                    }
+                }
+
+                updateProfileHeader();
+            } catch (error) {
+                console.error('Error loading profile:', error);
+            }
+        }
+
+
+        function updateProfileHeader() {
+            const fullName = document.getElementById('fullName').value || user.full_name;
+            const initials = fullName
+                .split(' ')
+                .map(n => n[0])
+                .join('')
+                .toUpperCase();
+            document.getElementById('profileAvatar').textContent = initials || 'U';
+            document.getElementById('profileName').textContent = fullName;
+            document.getElementById('profileRole').textContent = user.user_type.charAt(0).toUpperCase() + user.user_type.slice(1);
+        }
+
+        async function loadUsersList() {
+            try {
+                const response = await fetch(`${API_URL}/api/chat/users`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const users = await response.json();
+                displayUsersList(users);
+            } catch (error) {
+                console.error('Error loading users:', error);
+            }
+        }
+
+        function displayUsersList(users) {
+            const usersList = document.getElementById('usersList');
+            usersList.innerHTML = '';
+
+            users.forEach(u => {
+                const userEl = document.createElement('div');
+                userEl.className = 'conversation-item';
+                userEl.innerHTML = `
+                    <div class="avatar">${u.full_name[0].toUpperCase()}</div>
+                    <div class="conversation-info" style="flex: 1;">
+                        <div class="conversation-name">${u.full_name}</div>
+                        <div class="conversation-preview">${u.user_type}</div>
+                    </div>
+                `;
+                userEl.addEventListener('click', () => viewUserProfile(u));
+                usersList.appendChild(userEl);
+            });
+        }
+
+        function viewUserProfile(user) {
+            const modal = document.getElementById('userProfileModal');
+            const content = document.getElementById('userProfileContent');
+            
+            const initials = user.full_name.split(' ').map(n => n[0]).join('').toUpperCase();
+            
+            content.innerHTML = `
+                <div style="text-align: center; padding: 20px;">
+                    <div class="avatar" style="width: 100px; height: 100px; font-size: 40px; margin: 0 auto 20px;">
+                        ${initials}
+                    </div>
+                    <h3 style="font-size: 20px; color: var(--text-dark); margin: 10px 0;">${user.full_name}</h3>
+                    <p style="color: #25D366; font-weight: 600; margin-bottom: 20px;">
+                        ${user.user_type === 'faculty' ? '👨‍🏫 Faculty' : '📚 Student'}
+                    </p>
+                    <button class="btn btn-primary" onclick="startChat('${user.id}')">💬 Message</button>
+                </div>
+            `;
+            modal.classList.add('active');
+        }
+
+        function closeUserProfile() {
+            document.getElementById('userProfileModal').classList.remove('active');
+        }
+
+        async function startChat(userId) {
+            try {
+                const response = await fetch(`${API_URL}/api/chat/conversation`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ user2_id: parseInt(userId) })
+                });
+
+                const data = await response.json();
+                closeUserProfile();
+                goToDashboard();
+            } catch (error) {
+                console.error('Error starting conversation:', error);
+            }
+        }
+
+        // Search users
+        document.getElementById('userSearch').addEventListener('input', async (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            try {
+                const response = await fetch(`${API_URL}/api/chat/users`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const users = await response.json();
+                const filtered = users.filter(u => 
+                    u.full_name.toLowerCase().includes(searchTerm)
+                );
+                displayUsersList(filtered);
+            } catch (error) {
+                console.error('Error searching users:', error);
+            }
+        });
+
+        // Save profile
+        document.getElementById('profileForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const profileData = {
+                full_name: document.getElementById('fullName').value,
+                phone: document.getElementById('phone').value,
+                location: document.getElementById('location').value,
+                bio: document.getElementById('bio').value,
+                github: document.getElementById('github').value,
+                portfolio: document.getElementById('portfolio').value,
+            };
+
+            if (user.user_type === 'faculty') {
+                profileData.department = document.getElementById('department').value;
+                profileData.qualifications = document.getElementById('qualifications').value;
+                profileData.research_interests = document.getElementById('researchInterests').value;
+                profileData.office_hours = document.getElementById('officeHours').value;
+            } else {
+                // Both students and alumni
+                profileData.batch = document.getElementById('batch').value;
+                profileData.skills = document.getElementById('skillsField').value;
+                if (user.user_type === 'alumni') {
+                    profileData.current_company = document.getElementById('currentCompany').value;
+                    profileData.job_title = document.getElementById('jobTitle').value;
+                    profileData.linkedin = document.getElementById('linkedin').value;
+                    const referralRadio = document.querySelector('input[name="openToReferrals"]:checked');
+                    if (referralRadio) {
+                        profileData.open_to_referrals = referralRadio.value === 'yes';
+                    }
+                }
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/api/profile`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(profileData)
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    alert('✅ Profile updated successfully!');
+                    updateProfileHeader();
+                } else {
+                    console.error('Profile update error:', data);
+                    alert('❌ Error updating profile: ' + (data.error || 'Unknown error'));
+                }
+            } catch (error) {
+                console.error('Error saving profile:', error);
+                alert('❌ Error saving profile: ' + error.message);
+            }
+        });
+
+        function goToDashboard() {
+            if (user.user_type === 'faculty') {
+                window.location.href = '/faculty_dashboard/dashboard.html';
+            } else {
+                window.location.href = '/student_dashboard/dashboard.html';
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = '/login.html';
+        }
+    </script>
+</body>
+</html>

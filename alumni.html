@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alumni Network - NIST Professional Network</title>
+    <link rel="stylesheet" href="modern-style.css">
+    <style>
+        .alumni-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 16px;
+            padding: 16px;
+        }
+
+        .alumni-card {
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            transition: box-shadow 0.3s, transform 0.3s;
+            cursor: pointer;
+        }
+
+        .alumni-card:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .alumni-card-header {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .alumni-card-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .alumni-card-info h3 {
+            font-size: 16px;
+            color: var(--text-dark);
+            margin: 0 0 4px 0;
+        }
+
+        .alumni-card-info p {
+            font-size: 13px;
+            color: var(--text-light);
+            margin: 0;
+        }
+
+        .alumni-card-company {
+            background: var(--primary-light);
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            color: var(--primary-dark);
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .alumni-card-skills {
+            margin-bottom: 12px;
+        }
+
+        .skill-tag {
+            display: inline-block;
+            background: var(--bg-light);
+            color: var(--text-dark);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            margin-right: 4px;
+            margin-bottom: 4px;
+        }
+
+        .alumni-card-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-small {
+            flex: 1;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-small.primary {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-small.primary:hover {
+            background: var(--primary-dark);
+        }
+
+        .btn-small.secondary {
+            background: var(--bg-light);
+            color: var(--text-dark);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-small.secondary:hover {
+            background: var(--border-color);
+        }
+
+        .filters {
+            display: flex;
+            gap: 12px;
+            padding: 16px;
+            background: var(--bg-light);
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .filter-group {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .filter-group label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .filter-group input,
+        .filter-group select {
+            padding: 6px 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 13px;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            padding: 16px;
+            background: white;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .stat-box {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-top: 4px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-light);
+        }
+
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        .empty-state h3 {
+            font-size: 18px;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h2>NIST</h2>
+                <div class="sidebar-actions">
+                    <button class="icon-btn" onclick="goToChat()" title="Back to Chat">💬</button>
+                    <button class="icon-btn" onclick="logout()" title="Logout">🚪</button>
+                </div>
+            </div>
+
+            <div class="search-box">
+                <input type="text" id="globalSearch" placeholder="Search alumni...">
+            </div>
+
+            <div class="conversations-list" id="navigationMenu">
+                <div class="conversation-item active" onclick="setActiveTab('all')">
+                    <span style="font-size: 20px;">👥</span>
+                    <div class="conversation-info">
+                        <div class="conversation-name">All Alumni</div>
+                    </div>
+                </div>
+                <div class="conversation-item" onclick="setActiveTab('hiring')">
+                    <span style="font-size: 20px;">🎯</span>
+                    <div class="conversation-info">
+                        <div class="conversation-name">Hiring Open</div>
+                    </div>
+                </div>
+                <div class="conversation-item" onclick="setActiveTab('seeking')">
+                    <span style="font-size: 20px;">🔍</span>
+                    <div class="conversation-info">
+                        <div class="conversation-name">Job Seeking</div>
+                    </div>
+                </div>
+                <div class="conversation-item" onclick="setActiveTab('mentors')">
+                    <span style="font-size: 20px;">🎓</span>
+                    <div class="conversation-info">
+                        <div class="conversation-name">Mentors</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Alumni Content -->
+        <div class="chat-area" style="overflow-y: auto;">
+            <!-- Stats -->
+            <div class="stats">
+                <div class="stat-box">
+                    <div class="stat-number" id="totalAlumni">0</div>
+                    <div class="stat-label">Total Alumni</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number" id="hiringCount">0</div>
+                    <div class="stat-label">Hiring</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number" id="seekingCount">0</div>
+                    <div class="stat-label">Job Seeking</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number" id="companiesCount">0</div>
+                    <div class="stat-label">Companies</div>
+                </div>
+            </div>
+
+            <!-- Filters -->
+            <div class="filters">
+                <div class="filter-group">
+                    <label>Company:</label>
+                    <input type="text" id="companyFilter" placeholder="Filter by company">
+                </div>
+                <div class="filter-group">
+                    <label>Year:</label>
+                    <input type="text" id="yearFilter" placeholder="e.g., 2020">
+                </div>
+                <div class="filter-group">
+                    <label>Sort:</label>
+                    <select id="sortBy">
+                        <option value="name">By Name</option>
+                        <option value="company">By Company</option>
+                        <option value="recent">Recently Active</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Alumni Cards -->
+            <div class="alumni-container" id="alumniContainer">
+                <div class="empty-state">
+                    <div class="empty-state-icon">📭</div>
+                    <h3>No alumni found</h3>
+                    <p>Adjust your filters or check back later</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Profile Modal -->
+    <div class="modal" id="userProfileModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Profile</h2>
+                <button class="modal-close" onclick="closeUserProfile()">✕</button>
+            </div>
+            <div id="userProfileContent"></div>
+        </div>
+    </div>
+
+    <!-- Referral Request Modal -->
+    <div class="modal" id="referralModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Request Job Referral</h2>
+                <button class="modal-close" onclick="closeReferralModal()">✕</button>
+            </div>
+            <div style="padding: 20px;">
+                <form id="referralForm">
+                    <div class="form-input-group" style="margin-bottom: 16px;">
+                        <label>Your Name</label>
+                        <input type="text" id="referralName" readonly>
+                    </div>
+                    <div class="form-input-group" style="margin-bottom: 16px;">
+                        <label>Position Interested In</label>
+                        <input type="text" id="referralPosition" placeholder="e.g., Software Engineer">
+                    </div>
+                    <div class="form-input-group" style="margin-bottom: 16px;">
+                        <label>Message</label>
+                        <textarea id="referralMessage" placeholder="Tell them why you're interested..." style="resize: vertical; min-height: 100px;"></textarea>
+                    </div>
+                    <div style="display: flex; gap: 12px;">
+                        <button type="submit" class="btn btn-primary" style="flex: 1;">Send Request</button>
+                        <button type="button" class="btn btn-secondary" onclick="closeReferralModal()" style="flex: 1;">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+    <script>
+        const user = JSON.parse(localStorage.getItem('user'));
+        const token = localStorage.getItem('token');
+        const API_URL = 'http://localhost:3001';
+
+        if (!user || !token) {
+            window.location.href = '/login.html';
+        }
+
+        let allAlumni = [];
+        let currentTab = 'all';
+
+        window.addEventListener('load', async () => {
+            await loadAlumni();
+        });
+
+        async function loadAlumni() {
+            try {
+                const response = await fetch(`${API_URL}/api/alumni`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (!response.ok) {
+                    // For now, load mock alumni data
+                    allAlumni = getMockAlumniData();
+                } else {
+                    allAlumni = await response.json();
+                }
+
+                displayAlumni();
+                updateStats();
+            } catch (error) {
+                console.error('Error loading alumni:', error);
+                allAlumni = getMockAlumniData();
+                displayAlumni();
+                updateStats();
+            }
+        }
+
+        function getMockAlumniData() {
+            return [
+                {
+                    id: 1,
+                    full_name: 'Rajesh Kumar',
+                    batch: '2020',
+                    current_company: 'Google',
+                    job_title: 'Senior Software Engineer',
+                    skills: 'Python, Go, Cloud Architecture',
+                    is_hiring: true,
+                    open_to_referrals: true,
+                    linkedin: 'https://linkedin.com/in/rajesh-kumar'
+                },
+                {
+                    id: 2,
+                    full_name: 'Priya Singh',
+                    batch: '2021',
+                    current_company: 'Microsoft',
+                    job_title: 'Product Manager',
+                    skills: 'Product Strategy, Data Analysis, Leadership',
+                    is_hiring: true,
+                    open_to_referrals: true,
+                    linkedin: 'https://linkedin.com/in/priya-singh'
+                },
+                {
+                    id: 3,
+                    full_name: 'Arjun Patel',
+                    batch: '2019',
+                    current_company: 'Amazon',
+                    job_title: 'Solutions Architect',
+                    skills: 'AWS, Systems Design, DevOps',
+                    is_hiring: false,
+                    open_to_referrals: true,
+                    linkedin: 'https://linkedin.com/in/arjun-patel'
+                },
+                {
+                    id: 4,
+                    full_name: 'Neha Gupta',
+                    batch: '2022',
+                    current_company: 'Flipkart',
+                    job_title: 'Data Scientist',
+                    skills: 'Machine Learning, Python, Statistics',
+                    is_hiring: true,
+                    open_to_referrals: false,
+                    linkedin: 'https://linkedin.com/in/neha-gupta'
+                },
+                {
+                    id: 5,
+                    full_name: 'Vikram Sharma',
+                    batch: '2020',
+                    current_company: 'Spotify',
+                    job_title: 'Backend Engineer',
+                    skills: 'Java, Scala, Distributed Systems',
+                    is_hiring: false,
+                    open_to_referrals: true,
+                    linkedin: 'https://linkedin.com/in/vikram-sharma'
+                }
+            ];
+        }
+
+        function displayAlumni() {
+            const container = document.getElementById('alumniContainer');
+            let filtered = allAlumni;
+
+            // Filter by tab
+            if (currentTab === 'hiring') {
+                filtered = filtered.filter(a => a.is_hiring);
+            } else if (currentTab === 'seeking') {
+                filtered = filtered.filter(a => a.open_to_referrals);
+            }
+
+            // Filter by company
+            const companyFilter = document.getElementById('companyFilter').value.toLowerCase();
+            if (companyFilter) {
+                filtered = filtered.filter(a => a.current_company.toLowerCase().includes(companyFilter));
+            }
+
+            // Filter by year
+            const yearFilter = document.getElementById('yearFilter').value;
+            if (yearFilter) {
+                filtered = filtered.filter(a => a.batch === yearFilter);
+            }
+
+            // Sort
+            const sortBy = document.getElementById('sortBy').value;
+            if (sortBy === 'name') {
+                filtered.sort((a, b) => a.full_name.localeCompare(b.full_name));
+            } else if (sortBy === 'company') {
+                filtered.sort((a, b) => a.current_company.localeCompare(b.current_company));
+            }
+
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📭</div>
+                        <h3>No alumni found</h3>
+                        <p>Adjust your filters or check back later</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = filtered.map(alumni => {
+                const initials = alumni.full_name.split(' ').map(n => n[0]).join('').toUpperCase();
+                const skills = alumni.skills.split(',').map(s => s.trim());
+                
+                return `
+                    <div class="alumni-card">
+                        <div class="alumni-card-header">
+                            <div class="alumni-card-avatar">${initials}</div>
+                            <div class="alumni-card-info">
+                                <h3>${alumni.full_name}</h3>
+                                <p>Batch ${alumni.batch}</p>
+                            </div>
+                        </div>
+                        <div class="alumni-card-company">
+                            💼 ${alumni.current_company}
+                        </div>
+                        <div style="font-size: 13px; color: var(--text-dark); margin-bottom: 12px;">
+                            ${alumni.job_title}
+                        </div>
+                        <div class="alumni-card-skills">
+                            ${skills.slice(0, 3).map(skill => `<span class="skill-tag">${skill}</span>`).join('')}
+                        </div>
+                        <div class="alumni-card-actions">
+                            <button class="btn-small primary" onclick="sendMessage(${alumni.id}, '${alumni.full_name}')">Message</button>
+                            ${alumni.is_hiring ? `<button class="btn-small secondary" onclick="openReferralModal(${alumni.id}, '${alumni.full_name}')">Refer</button>` : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function updateStats() {
+            document.getElementById('totalAlumni').textContent = allAlumni.length;
+            document.getElementById('hiringCount').textContent = allAlumni.filter(a => a.is_hiring).length;
+            document.getElementById('seekingCount').textContent = allAlumni.filter(a => a.open_to_referrals).length;
+            const companies = new Set(allAlumni.map(a => a.current_company));
+            document.getElementById('companiesCount').textContent = companies.size;
+        }
+
+        function setActiveTab(tab) {
+            currentTab = tab;
+            document.querySelectorAll('.conversation-item').forEach((el, i) => {
+                el.classList.remove('active');
+            });
+            event.target.closest('.conversation-item').classList.add('active');
+            displayAlumni();
+        }
+
+        // Search functionality
+        document.getElementById('globalSearch').addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            const filtered = allAlumni.filter(a => 
+                a.full_name.toLowerCase().includes(searchTerm) ||
+                a.current_company.toLowerCase().includes(searchTerm) ||
+                a.skills.toLowerCase().includes(searchTerm)
+            );
+            
+            const container = document.getElementById('alumniContainer');
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">🔍</div>
+                        <h3>No matches found</h3>
+                        <p>Try searching for a different alumni or company</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = filtered.map(alumni => {
+                const initials = alumni.full_name.split(' ').map(n => n[0]).join('').toUpperCase();
+                const skills = alumni.skills.split(',').map(s => s.trim());
+                
+                return `
+                    <div class="alumni-card">
+                        <div class="alumni-card-header">
+                            <div class="alumni-card-avatar">${initials}</div>
+                            <div class="alumni-card-info">
+                                <h3>${alumni.full_name}</h3>
+                                <p>Batch ${alumni.batch}</p>
+                            </div>
+                        </div>
+                        <div class="alumni-card-company">
+                            💼 ${alumni.current_company}
+                        </div>
+                        <div style="font-size: 13px; color: var(--text-dark); margin-bottom: 12px;">
+                            ${alumni.job_title}
+                        </div>
+                        <div class="alumni-card-skills">
+                            ${skills.slice(0, 3).map(skill => `<span class="skill-tag">${skill}</span>`).join('')}
+                        </div>
+                        <div class="alumni-card-actions">
+                            <button class="btn-small primary" onclick="sendMessage(${alumni.id}, '${alumni.full_name}')">Message</button>
+                            ${alumni.is_hiring ? `<button class="btn-small secondary" onclick="openReferralModal(${alumni.id}, '${alumni.full_name}')">Refer</button>` : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        });
+
+        // Filter listeners
+        document.getElementById('companyFilter').addEventListener('input', displayAlumni);
+        document.getElementById('yearFilter').addEventListener('input', displayAlumni);
+        document.getElementById('sortBy').addEventListener('change', displayAlumni);
+
+        function sendMessage(alumniId, alumniName) {
+            console.log(`Sending message to ${alumniName}`);
+            // Navigate to chat with this alumni
+            goToChat();
+        }
+
+        function openReferralModal(alumniId, alumniName) {
+            document.getElementById('referralName').value = user.full_name;
+            document.getElementById('referralForm').dataset.alumniId = alumniId;
+            document.getElementById('referralForm').dataset.alumniName = alumniName;
+            document.getElementById('referralModal').classList.add('active');
+        }
+
+        function closeReferralModal() {
+            document.getElementById('referralModal').classList.remove('active');
+        }
+
+        document.getElementById('referralForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            alert('Referral request sent! ✅');
+            closeReferralModal();
+        });
+
+        function closeUserProfile() {
+            document.getElementById('userProfileModal').classList.remove('active');
+        }
+
+        function goToChat() {
+            if (user.user_type === 'faculty') {
+                window.location.href = '/faculty_dashboard/dashboard.html';
+            } else {
+                window.location.href = '/student_dashboard/dashboard.html';
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = '/login.html';
+        }
+    </script>
+</body>
+</html>

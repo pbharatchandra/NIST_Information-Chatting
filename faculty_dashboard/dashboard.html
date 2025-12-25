@@ -17,9 +17,26 @@
                     <div class="name" id="userName"></div>
                     <div class="role">Faculty</div>
                 </div>
-                <button class="logout-btn" onclick="logout()">Logout</button>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <a href="../profile.html" class="nav-link" title="Profile">👤</a>
+                    <a href="../documents.html" class="nav-link" title="Documents & Resources">📄</a>
+                    <a href="../alumni.html" class="nav-link" title="Alumni Network">🎓</a>
+                    <button class="logout-btn" onclick="logout()">Logout</button>
+                </div>
             </div>
         </div>
+        <style>
+            .nav-link {
+                font-size: 24px;
+                cursor: pointer;
+                text-decoration: none;
+                transition: transform 0.2s;
+                display: inline-block;
+            }
+            .nav-link:hover {
+                transform: scale(1.2);
+            }
+        </style>
 
         <!-- Chat Container -->
         <div class="chat-container">

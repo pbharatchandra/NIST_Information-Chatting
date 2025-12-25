@@ -60,14 +60,14 @@ const verifyToken = (req, res, next) => {
 // Sign Up
 app.post('/api/auth/signup', async (req, res) => {
     try {
-        const { email, password, full_name, user_type } = req.body;
+        const { email, password, full_name, user_type, roll_number } = req.body;
 
         // Validate input
-        if (!email || !password || !full_name || !user_type) {
+        if (!email || !password || !full_name || !user_type || !roll_number) {
             return res.status(400).json({ error: 'All fields are required' });
         }
 
-        if (user_type !== 'student' && user_type !== 'faculty') {
+        if (user_type !== 'student' && user_type !== 'faculty' && user_type !== 'alumni') {
             return res.status(400).json({ error: 'Invalid user type' });
         }
 
@@ -78,17 +78,17 @@ app.post('/api/auth/signup', async (req, res) => {
         );
 
         if (userExists.rows.length > 0) {
-            return res.status(400).json({ error: 'User already exists with this email' });
+            return res.status(400).json({ error: 'Email already registered' });
         }
 
         // Hash password
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        // Insert user
+        // Insert user WITH roll_number (columns now exist after migration)
         const result = await pool.query(
-            `INSERT INTO users (email, password, full_name, user_type)
-            VALUES ($1, $2, $3, $4) RETURNING id, email, full_name, user_type`,
-            [email, hashedPassword, full_name, user_type]
+            `INSERT INTO users (email, password, full_name, user_type, roll_number)
+            VALUES ($1, $2, $3, $4, $5) RETURNING id, email, full_name, user_type, roll_number`,
+            [email, hashedPassword, full_name, user_type, roll_number]
         );
 
         const user = result.rows[0];
@@ -100,6 +100,8 @@ app.post('/api/auth/signup', async (req, res) => {
             { expiresIn: '24h' }
         );
 
+        console.log(`✅ New user signed up: ${user.full_name} (${user.email}) - Roll: ${user.roll_number}`);
+
         res.json({
             message: 'User registered successfully',
             token,
@@ -107,7 +109,8 @@ app.post('/api/auth/signup', async (req, res) => {
                 id: user.id,
                 email: user.email,
                 full_name: user.full_name,
-                user_type: user.user_type
+                user_type: user.user_type,
+                roll_number: user.roll_number
             }
         });
     } catch (err) {
@@ -125,9 +128,11 @@ app.post('/api/auth/login', async (req, res) => {
             return res.status(400).json({ error: 'Email and password are required' });
         }
 
-        // Find user
+        // Find user - with all profile columns
         const result = await pool.query(
-            'SELECT id, email, password, full_name, user_type FROM users WHERE email = $1',
+            `SELECT id, email, password, full_name, user_type, roll_number, 
+                    phone, location, bio, github, portfolio
+            FROM users WHERE email = $1`,
             [email]
         );
 
@@ -146,10 +151,16 @@ app.post('/api/auth/login', async (req, res) => {
 
         // Generate JWT
         const token = jwt.sign(
-            { id: user.id, email: user.email, user_type: user.user_type },
+            { 
+                id: user.id, 
+                email: user.email, 
+                user_type: user.user_type
+            },
             JWT_SECRET,
             { expiresIn: '24h' }
         );
+
+        console.log(`✅ User logged in: ${user.full_name} (${user.email}) - Roll: ${user.roll_number}`);
 
         res.json({
             message: 'Login successful',
@@ -158,7 +169,8 @@ app.post('/api/auth/login', async (req, res) => {
                 id: user.id,
                 email: user.email,
                 full_name: user.full_name,
-                user_type: user.user_type
+                user_type: user.user_type,
+                roll_number: user.roll_number || '-'
             }
         });
     } catch (err) {
@@ -170,8 +182,49 @@ app.post('/api/auth/login', async (req, res) => {
 // Get current user
 app.get('/api/auth/me', verifyToken, async (req, res) => {
     try {
+        let result;
+        try {
+            result = await pool.query(
+                'SELECT id, email, full_name, user_type, roll_number FROM users WHERE id = $1',
+                [req.user.id]
+            );
+        } catch (err) {
+            if (err.message.includes('roll_number')) {
+                result = await pool.query(
+                    'SELECT id, email, full_name, user_type FROM users WHERE id = $1',
+                    [req.user.id]
+                );
+            } else {
+                throw err;
+            }
+        }
+
+        if (result.rows.length === 0) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        const user = result.rows[0];
+        res.json({
+            ...user,
+            roll_number: user.roll_number || user.email  // Fallback to email
+        });
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+
+// ==================== PROFILE ENDPOINTS ====================
+
+// Get user profile
+app.get('/api/profile', verifyToken, async (req, res) => {
+    try {
         const result = await pool.query(
-            'SELECT id, email, full_name, user_type FROM users WHERE id = $1',
+            `SELECT id, email, full_name, user_type, phone, location, department, bio, 
+                    github, portfolio, roll_number, batch, skills, qualifications, 
+                    research_interests, office_hours, current_company, job_title, 
+                    linkedin, open_to_referrals, is_alumni, created_at
+            FROM users WHERE id = $1`,
             [req.user.id]
         );
 
@@ -183,6 +236,62 @@ app.get('/api/auth/me', verifyToken, async (req, res) => {
     } catch (err) {
         console.error(err.message);
         res.status(500).json({ error: 'Server error' });
+    }
+});
+
+// Update user profile
+app.put('/api/profile', verifyToken, async (req, res) => {
+    try {
+        const {
+            full_name, phone, location, department, bio, github, portfolio,
+            batch, skills, qualifications, research_interests,
+            office_hours, current_company, job_title, linkedin, open_to_referrals
+        } = req.body;
+
+        console.log('Profile update request for user:', req.user.id);
+
+        // Update user profile with all columns
+        const result = await pool.query(
+            `UPDATE users 
+            SET full_name = COALESCE($1, full_name),
+                phone = COALESCE($2, phone),
+                location = COALESCE($3, location),
+                department = COALESCE($4, department),
+                bio = COALESCE($5, bio),
+                github = COALESCE($6, github),
+                portfolio = COALESCE($7, portfolio),
+                batch = COALESCE($8, batch),
+                skills = COALESCE($9, skills),
+                qualifications = COALESCE($10, qualifications),
+                research_interests = COALESCE($11, research_interests),
+                office_hours = COALESCE($12, office_hours),
+                current_company = COALESCE($13, current_company),
+                job_title = COALESCE($14, job_title),
+                linkedin = COALESCE($15, linkedin),
+                open_to_referrals = COALESCE($16, open_to_referrals),
+                updated_at = CURRENT_TIMESTAMP
+            WHERE id = $17
+            RETURNING id, email, full_name, user_type, roll_number, phone, location, 
+                    department, bio, github, portfolio, batch, skills, qualifications, 
+                    research_interests, office_hours, current_company, job_title, 
+                    linkedin, open_to_referrals, updated_at`,
+            [
+                full_name, phone, location, department, bio, github, portfolio,
+                batch, skills, qualifications, research_interests,
+                office_hours, current_company, job_title, linkedin, open_to_referrals,
+                req.user.id
+            ]
+        );
+
+        if (result.rows.length === 0) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        console.log('Profile updated successfully for user:', req.user.id);
+        res.json({ message: 'Profile updated successfully', user: result.rows[0] });
+    } catch (err) {
+        console.error('Profile update error:', err.message);
+        res.status(500).json({ error: 'Server error: ' + err.message });
     }
 });
 

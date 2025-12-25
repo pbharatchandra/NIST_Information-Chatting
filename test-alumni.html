@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Alumni System Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 900px; margin: 40px auto; padding: 20px; }
+        .test { border: 1px solid #ddd; margin: 20px 0; padding: 15px; border-radius: 5px; }
+        .pass { background: #d4edda; border-color: #28a745; }
+        .fail { background: #f8d7da; border-color: #dc3545; }
+        .loading { background: #fff3cd; border-color: #ffc107; }
+        h1 { color: #333; }
+        button { background: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 3px; cursor: pointer; margin: 5px; }
+        button:hover { background: #0056b3; }
+        .output { background: #f5f5f5; padding: 10px; border-radius: 3px; font-family: monospace; font-size: 12px; margin-top: 10px; max-height: 200px; overflow-y: auto; }
+    </style>
+</head>
+<body>
+    <h1>🎓 Alumni Role System - Test Interface</h1>
+    
+    <div class="test loading" id="serverTest">
+        <h3>Server Status</h3>
+        <p id="serverStatus">Checking...</p>
+    </div>
+    
+    <div class="test" id="signupTest">
+        <h3>Test Alumni Signup</h3>
+        <button onclick="testAlumniSignup()">Run Test</button>
+        <div class="output" id="signupOutput"></div>
+    </div>
+    
+    <div class="test" id="studentTest">
+        <h3>Test Student Signup</h3>
+        <button onclick="testStudentSignup()">Run Test</button>
+        <div class="output" id="studentOutput"></div>
+    </div>
+    
+    <div class="test" id="loginTest">
+        <h3>Test Login</h3>
+        <button onclick="testLogin()">Run Test</button>
+        <div class="output" id="loginOutput"></div>
+    </div>
+    
+    <div class="test" id="profileTest">
+        <h3>Test Profile</h3>
+        <button onclick="testProfile()">Run Test</button>
+        <div class="output" id="profileOutput"></div>
+    </div>
+    
+    <div class="test" style="background: #d1ecf1; border-color: #0c5460;">
+        <h3>✓ Ready for Manual Testing</h3>
+        <p><strong>URL:</strong> <a href="/signup.html" target="_blank">http://localhost:3001/signup.html</a></p>
+        <p><strong>Test Signup:</strong></p>
+        <ul>
+            <li>Name: Alumni User Test</li>
+            <li>Email: alumni.manual@test.com</li>
+            <li>Password: Test@123456</li>
+            <li>Roll Number: ALUM-MANUAL-001</li>
+            <li>Role: Alumni</li>
+        </ul>
+        <p><strong>Expected:</strong> Redirect to /alumni_dashboard/dashboard.html</p>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:3001';
+        let testToken = null;
+
+        // Check server status
+        window.addEventListener('load', async () => {
+            try {
+                const response = await fetch(`${API_URL}/api/chat/users`, { timeout: 2000 });
+                document.getElementById('serverStatus').textContent = '✓ Server is RUNNING';
+                document.getElementById('serverTest').className = 'test pass';
+            } catch (e) {
+                document.getElementById('serverStatus').textContent = '✗ Server is NOT running - Start with: node backend/auth-server.js';
+                document.getElementById('serverTest').className = 'test fail';
+            }
+        });
+
+        async function testAlumniSignup() {
+            const output = document.getElementById('signupOutput');
+            output.textContent = 'Testing...';
+            
+            try {
+                const response = await fetch(`${API_URL}/api/auth/signup`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        full_name: 'John Alumni Test',
+                        email: 'john.alumni.test@com',
+                        password: 'Test@123456',
+                        roll_number: 'ALUM-2024-001',
+                        user_type: 'alumni'
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.user.user_type === 'alumni') {
+                    testToken = data.token;
+                    document.getElementById('signupTest').className = 'test pass';
+                    output.innerHTML = `
+                        <strong>✓ Alumni Signup Successful</strong><br>
+                        User ID: ${data.user.id}<br>
+                        Name: ${data.user.full_name}<br>
+                        Email: ${data.user.email}<br>
+                        Roll Number: ${data.user.roll_number}<br>
+                        User Type: ${data.user.user_type}
+                    `;
+                } else {
+                    document.getElementById('signupTest').className = 'test fail';
+                    output.innerHTML = `<strong>✗ Signup Failed</strong><br>${JSON.stringify(data, null, 2)}`;
+                }
+            } catch (e) {
+                document.getElementById('signupTest').className = 'test fail';
+                output.textContent = `Error: ${e.message}`;
+            }
+        }
+
+        async function testStudentSignup() {
+            const output = document.getElementById('studentOutput');
+            output.textContent = 'Testing...';
+            
+            try {
+                const response = await fetch(`${API_URL}/api/auth/signup`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        full_name: 'Jane Student Test',
+                        email: 'jane.student.test@com',
+                        password: 'Test@123456',
+                        roll_number: 'STU-2024-001',
+                        user_type: 'student'
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.user.user_type === 'student') {
+                    document.getElementById('studentTest').className = 'test pass';
+                    output.innerHTML = `
+                        <strong>✓ Student Signup Successful</strong><br>
+                        Name: ${data.user.full_name}<br>
+                        Email: ${data.user.email}<br>
+                        Roll Number: ${data.user.roll_number}<br>
+                        User Type: ${data.user.user_type}
+                    `;
+                } else {
+                    document.getElementById('studentTest').className = 'test fail';
+                    output.innerHTML = `<strong>✗ Signup Failed</strong><br>${JSON.stringify(data, null, 2)}`;
+                }
+            } catch (e) {
+                document.getElementById('studentTest').className = 'test fail';
+                output.textContent = `Error: ${e.message}`;
+            }
+        }
+
+        async function testLogin() {
+            const output = document.getElementById('loginOutput');
+            output.textContent = 'Testing...';
+            
+            try {
+                const response = await fetch(`${API_URL}/api/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: 'john.alumni.test@com',
+                        password: 'Test@123456'
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    testToken = data.token;
+                    document.getElementById('loginTest').className = 'test pass';
+                    output.innerHTML = `
+                        <strong>✓ Login Successful</strong><br>
+                        User: ${data.user.full_name}<br>
+                        Email: ${data.user.email}<br>
+                        Roll Number: ${data.user.roll_number}<br>
+                        User Type: ${data.user.user_type}
+                    `;
+                } else {
+                    document.getElementById('loginTest').className = 'test fail';
+                    output.innerHTML = `<strong>✗ Login Failed</strong><br>${JSON.stringify(data, null, 2)}`;
+                }
+            } catch (e) {
+                document.getElementById('loginTest').className = 'test fail';
+                output.textContent = `Error: ${e.message}`;
+            }
+        }
+
+        async function testProfile() {
+            const output = document.getElementById('profileOutput');
+            output.textContent = 'Testing...';
+            
+            if (!testToken) {
+                output.textContent = 'Please run login test first';
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_URL}/api/auth/me`, {
+                    method: 'GET',
+                    headers: { 'Authorization': `Bearer ${testToken}` }
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    document.getElementById('profileTest').className = 'test pass';
+                    output.innerHTML = `
+                        <strong>✓ Profile Retrieved</strong><br>
+                        ID: ${data.id}<br>
+                        Name: ${data.full_name}<br>
+                        Email: ${data.email}<br>
+                        Roll Number: ${data.roll_number}<br>
+                        User Type: ${data.user_type}
+                    `;
+                } else {
+                    document.getElementById('profileTest').className = 'test fail';
+                    output.innerHTML = `<strong>✗ Profile Fetch Failed</strong><br>${JSON.stringify(data, null, 2)}`;
+                }
+            } catch (e) {
+                document.getElementById('profileTest').className = 'test fail';
+                output.textContent = `Error: ${e.message}`;
+            }
+        }
+    </script>
+</body>
+</html>
