@@ -1,6 +1,8 @@
 const express = require('express');
 const { Server } = require('socket.io');
 const { Pool } = require('pg');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 const cors = require('cors');
 const http = require('http');
 const path = require('path');
@@ -15,6 +17,7 @@ const io = new Server(server, {
 });
 
 const port = 3001;
+const JWT_SECRET = 'your_jwt_secret_key_change_this_in_production';
 
 // Middleware
 app.use(cors());
@@ -33,27 +36,177 @@ const pool = new Pool({
 // Store active users
 const activeUsers = new Map();
 
-// ==================== REST API ENDPOINTS ====================
+// ==================== MIDDLEWARE ====================
 
-// Get all users (for chat selection)
-app.get('/api/chat/users/:user_id', async (req, res) => {
+// Verify JWT Token
+const verifyToken = (req, res, next) => {
+    const token = req.headers.authorization?.split(' ')[1];
+    
+    if (!token) {
+        return res.status(401).json({ error: 'No token provided' });
+    }
+
     try {
-        const { user_id } = req.params;
+        const decoded = jwt.verify(token, JWT_SECRET);
+        req.user = decoded;
+        next();
+    } catch (err) {
+        res.status(401).json({ error: 'Invalid token' });
+    }
+};
+
+// ==================== AUTH ENDPOINTS ====================
+
+// Sign Up
+app.post('/api/auth/signup', async (req, res) => {
+    try {
+        const { email, password, full_name, user_type } = req.body;
+
+        // Validate input
+        if (!email || !password || !full_name || !user_type) {
+            return res.status(400).json({ error: 'All fields are required' });
+        }
+
+        if (user_type !== 'student' && user_type !== 'faculty') {
+            return res.status(400).json({ error: 'Invalid user type' });
+        }
+
+        // Check if user already exists
+        const userExists = await pool.query(
+            'SELECT id FROM users WHERE email = $1',
+            [email]
+        );
+
+        if (userExists.rows.length > 0) {
+            return res.status(400).json({ error: 'User already exists with this email' });
+        }
+
+        // Hash password
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        // Insert user
         const result = await pool.query(
-            `SELECT id, full_name, user_type FROM users WHERE id != $1 ORDER BY full_name`,
-            [user_id]
+            `INSERT INTO users (email, password, full_name, user_type)
+            VALUES ($1, $2, $3, $4) RETURNING id, email, full_name, user_type`,
+            [email, hashedPassword, full_name, user_type]
+        );
+
+        const user = result.rows[0];
+
+        // Generate JWT
+        const token = jwt.sign(
+            { id: user.id, email: user.email, user_type: user.user_type },
+            JWT_SECRET,
+            { expiresIn: '24h' }
+        );
+
+        res.json({
+            message: 'User registered successfully',
+            token,
+            user: {
+                id: user.id,
+                email: user.email,
+                full_name: user.full_name,
+                user_type: user.user_type
+            }
+        });
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+
+// Login
+app.post('/api/auth/login', async (req, res) => {
+    try {
+        const { email, password } = req.body;
+
+        if (!email || !password) {
+            return res.status(400).json({ error: 'Email and password are required' });
+        }
+
+        // Find user
+        const result = await pool.query(
+            'SELECT id, email, password, full_name, user_type FROM users WHERE email = $1',
+            [email]
+        );
+
+        if (result.rows.length === 0) {
+            return res.status(401).json({ error: 'Invalid email or password' });
+        }
+
+        const user = result.rows[0];
+
+        // Compare password
+        const passwordMatch = await bcrypt.compare(password, user.password);
+
+        if (!passwordMatch) {
+            return res.status(401).json({ error: 'Invalid email or password' });
+        }
+
+        // Generate JWT
+        const token = jwt.sign(
+            { id: user.id, email: user.email, user_type: user.user_type },
+            JWT_SECRET,
+            { expiresIn: '24h' }
+        );
+
+        res.json({
+            message: 'Login successful',
+            token,
+            user: {
+                id: user.id,
+                email: user.email,
+                full_name: user.full_name,
+                user_type: user.user_type
+            }
+        });
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+
+// Get current user
+app.get('/api/auth/me', verifyToken, async (req, res) => {
+    try {
+        const result = await pool.query(
+            'SELECT id, email, full_name, user_type FROM users WHERE id = $1',
+            [req.user.id]
+        );
+
+        if (result.rows.length === 0) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        res.json(result.rows[0]);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+
+// ==================== CHAT ENDPOINTS ====================
+
+// Get all users except current user
+app.get('/api/chat/users', verifyToken, async (req, res) => {
+    try {
+        const result = await pool.query(
+            'SELECT id, full_name, user_type FROM users WHERE id != $1 ORDER BY full_name',
+            [req.user.id]
         );
         res.json(result.rows);
     } catch (err) {
         console.error(err.message);
-        res.status(500).json({ error: "Server error" });
+        res.status(500).json({ error: 'Server error' });
     }
 });
 
 // Get or create conversation between two users
-app.post('/api/chat/conversation', async (req, res) => {
+app.post('/api/chat/conversation', verifyToken, async (req, res) => {
     try {
-        const { user1_id, user2_id } = req.body;
+        const { user2_id } = req.body;
+        const user1_id = req.user.id;
 
         // Check if conversation already exists
         let conversation = await pool.query(
@@ -68,11 +221,10 @@ app.post('/api/chat/conversation', async (req, res) => {
             return res.json({ conversation_id: conversation.rows[0].id });
         }
 
-        // Create new conversation without created_by (it's not essential for direct messages)
+        // Create new conversation
         const newConv = await pool.query(
             `INSERT INTO conversations (conversation_type)
-            VALUES ('direct') RETURNING id`,
-            []
+            VALUES ('direct') RETURNING id`
         );
 
         const conversationId = newConv.rows[0].id;
@@ -86,12 +238,12 @@ app.post('/api/chat/conversation', async (req, res) => {
         res.json({ conversation_id: conversationId });
     } catch (err) {
         console.error(err.message);
-        res.status(500).json({ error: "Server error" });
+        res.status(500).json({ error: 'Server error' });
     }
 });
 
 // Get chat history
-app.get('/api/chat/messages/:conversation_id', async (req, res) => {
+app.get('/api/chat/messages/:conversation_id', verifyToken, async (req, res) => {
     try {
         const { conversation_id } = req.params;
         const limit = req.query.limit || 50;
@@ -111,14 +263,14 @@ app.get('/api/chat/messages/:conversation_id', async (req, res) => {
         res.json(result.rows.reverse());
     } catch (err) {
         console.error(err.message);
-        res.status(500).json({ error: "Server error" });
+        res.status(500).json({ error: 'Server error' });
     }
 });
 
 // Get user conversations list
-app.get('/api/chat/conversations/:user_id', async (req, res) => {
+app.get('/api/chat/conversations', verifyToken, async (req, res) => {
     try {
-        const { user_id } = req.params;
+        const user_id = req.user.id;
 
         const result = await pool.query(
             `SELECT c.id, c.conversation_name, 
@@ -146,7 +298,7 @@ app.get('/api/chat/conversations/:user_id', async (req, res) => {
         res.json(result.rows);
     } catch (err) {
         console.error(err.message);
-        res.status(500).json({ error: "Server error" });
+        res.status(500).json({ error: 'Server error' });
     }
 });
 
@@ -217,19 +369,6 @@ io.on('connection', (socket) => {
         }
     });
 
-    // Mark message as read
-    socket.on('mark_read', async (data) => {
-        try {
-            const { message_id } = data;
-            await pool.query(
-                `UPDATE messages SET is_read = true WHERE id = $1`,
-                [message_id]
-            );
-        } catch (err) {
-            console.error(err.message);
-        }
-    });
-
     // User typing
     socket.on('user_typing', (data) => {
         const { conversation_id, user_id, full_name } = data;
@@ -271,5 +410,5 @@ app.get('/api/chat/active-users', (req, res) => {
 
 // Start server
 server.listen(port, () => {
-    console.log(`Chat server running on http://localhost:${port}`);
+    console.log(`Auth & Chat server running on http://localhost:${port}`);
 });

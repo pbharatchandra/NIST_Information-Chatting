@@ -14,6 +14,13 @@ if (!currentUserId) {
     localStorage.setItem('user_name', currentFullName);
 }
 
+// Convert to integer
+currentUserId = parseInt(currentUserId, 10);
+if (isNaN(currentUserId)) {
+    alert('Invalid User ID. Please enter a valid number.');
+    currentUserId = 1;
+}
+
 // Initialize Socket.IO
 const socket = io(CHAT_SERVER);
 

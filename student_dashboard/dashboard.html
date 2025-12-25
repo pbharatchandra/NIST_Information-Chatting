@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard - NIST Chat</title>
+    <link rel="stylesheet" href="../style.css">
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+</head>
+<body>
+    <!-- Dashboard Header -->
+    <div class="container">
+        <div class="dashboard-header">
+            <h1>📚 Student Dashboard</h1>
+            <div class="user-info">
+                <div class="user-details">
+                    <div class="name" id="userName"></div>
+                    <div class="role">Student</div>
+                </div>
+                <button class="logout-btn" onclick="logout()">Logout</button>
+            </div>
+        </div>
+
+        <!-- Chat Container -->
+        <div class="chat-container">
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <div class="sidebar-header">
+                    <h2>Messages</h2>
+                    <button class="new-chat-btn" onclick="openUserModal()" title="Start new chat">+</button>
+                </div>
+
+                <!-- Online Users -->
+                <div class="online-users">
+                    <h3>Online</h3>
+                    <div id="onlineUsersList" class="users-list"></div>
+                </div>
+
+                <!-- Conversations List -->
+                <div class="conversations">
+                    <h3>Chats</h3>
+                    <div id="conversationsList" class="conversations-list"></div>
+                </div>
+            </div>
+
+            <!-- Main Chat Area -->
+            <div class="chat-area">
+                <div id="noChatSelected" class="no-chat-selected">
+                    <div class="empty-state">
+                        <h3>Select a chat to start messaging</h3>
+                        <p>Choose someone from the online list or your recent conversations</p>
+                    </div>
+                </div>
+
+                <div id="chatWindow" class="chat-window" style="display: none;">
+                    <!-- Chat Header -->
+                    <div class="chat-header">
+                        <div class="chat-header-info">
+                            <h3 id="chatUserName"></h3>
+                            <span id="userStatus" class="user-status"></span>
+                        </div>
+                    </div>
+
+                    <!-- Messages Area -->
+                    <div id="messagesArea" class="messages-area"></div>
+
+                    <!-- Input Area -->
+                    <div class="input-area">
+                        <input 
+                            type="text" 
+                            id="messageInput" 
+                            class="message-input" 
+                            placeholder="Type a message..."
+                            autocomplete="off"
+                        >
+                        <button class="send-btn" onclick="sendMessage()">Send</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for selecting user -->
+    <div id="userModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close" onclick="closeUserModal()">&times;</span>
+            <h2>Start a Conversation</h2>
+            <input 
+                type="text" 
+                id="userSearchInput" 
+                class="user-search" 
+                placeholder="Search users..."
+                oninput="filterUsers(this.value)"
+            >
+            <div id="userListModal" class="user-list-modal"></div>
+        </div>
+    </div>
+
+    <script src="dashboard.js"></script>
+</body>
+</html>
