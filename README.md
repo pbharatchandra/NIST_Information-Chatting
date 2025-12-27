@@ -56,43 +56,69 @@ Click "Sign Up"
 ```
 NIST_Information-Chatting/
 │
-├── 📄 Core Files
-│   ├── index.html                    (Landing page)
-│   ├── signup.html                   (Registration)
-│   ├── login.html                    (Login)
-│   └── style.css                     (Global styling)
-│
-├── 📁 Backend
-│   └── backend/
-│       └── auth-server.js            (Express + Socket.IO server)
-│
-├── 📁 Student Dashboard
-│   └── student_dashboard/
-│       ├── dashboard.html            (UI)
-│       └── dashboard.js              (Chat logic + notifications)
-│
-├── 📁 Faculty Dashboard
-│   └── faculty_dashboard/
-│       ├── dashboard.html            (UI)
-│       └── dashboard.js              (Chat logic + notifications)
-│
-├── 🗄️ Database
-│   └── auth_schema.sql               (PostgreSQL schema)
-│
-├── 📚 Documentation
-│   ├── SETUP_GUIDE.md                (Installation steps)
-│   ├── NOTIFICATIONS_GUIDE.md         (Notification details)
-│   ├── VISUAL_GUIDE.md               (Visual walkthrough)
-│   ├── IMPLEMENTATION_SUMMARY.md      (Technical details)
-│   └── VERIFICATION_CHECKLIST.md      (Testing guide)
-│
-├── ⚙️ Configuration
+├── 📄 Root Files
+│   ├── README.md                     (This file)
 │   ├── package.json                  (Dependencies)
-│   ├── fix_permissions.sql           (Database permission setup)
-│   └── fix_permissions.bat           (Permission fix script)
+│   └── .gitignore                    (Git configuration)
 │
-└── 📦 Dependencies
-    └── node_modules/                 (npm packages installed)
+├── 📁 frontend/                      (Entry point pages)
+│   ├── index.html                    (Landing page)
+│   ├── login.html                    (Login page)
+│   ├── signup.html                   (Registration)
+│   ├── profile.html                  (User profile)
+│   ├── documents.html                (Documents page)
+│   ├── alumni.html                   (Alumni page)
+│   ├── admin_login.html              (Admin login)
+│   ├── style.css                     (Global styling)
+│   └── modern-style.css              (Modern UI styling)
+│
+├── 📁 backend/                       (Server-side code)
+│   ├── auth-server.js                (Main Express + Socket.IO server)
+│   ├── admin-server.js               (Admin API server)
+│   ├── chat-server.js                (Chat API server)
+│   └── server.js                     (Server utilities)
+│
+├── 📁 student_dashboard/             (Student portal)
+│   ├── dashboard.html, dashboard.js  (Main dashboard)
+│   ├── chat.html, chat.js, chat.css  (Chat interface)
+│   ├── timetable.html, timetable.js  (Timetable feature)
+│   └── exam.html, password.html      (Other features)
+│
+├── 📁 faculty_dashboard/             (Faculty portal)
+│   ├── dashboard.html, dashboard.js  (Main dashboard)
+│   ├── chat.html, chat.js, chat.css  (Chat interface)
+│   └── faculty.html, faculty.js      (Faculty features)
+│
+├── 📁 admin_dashboard/               (Admin portal)
+│   ├── admin.html                    (Admin UI)
+│   ├── admin-dashboard.js            (Admin logic)
+│   └── admin-style.css               (Admin styling)
+│
+├── 📁 alumni_dashboard/              (Alumni portal)
+│   ├── dashboard.html                (Alumni UI)
+│   └── dashboard.js                  (Alumni logic)
+│
+├── 📁 docs/                          (Documentation)
+│   ├── admin/                        (Admin docs - 10 files)
+│   ├── alumni/                       (Alumni docs - 3 files)
+│   ├── guides/                       (Setup guides - 7 files)
+│   └── summaries/                    (Project summaries - 9 files)
+│
+├── 📁 database/                      (SQL scripts)
+│   ├── schema/                       (Database schemas)
+│   ├── migrations/                   (Migration scripts)
+│   └── utils/                        (Utility scripts)
+│
+├── 📁 scripts/                       (Utility scripts)
+│   ├── python/                       (Python scripts)
+│   ├── js/                           (JavaScript utilities)
+│   └── shell/                        (Batch/shell scripts)
+│
+├── 📁 tests/                         (Test files)
+│   ├── test-alumni.html              (Alumni test page)
+│   └── test_alumni.ps1               (PowerShell tests)
+│
+└── 📦 node_modules/                  (npm packages)
 ```
 
 ---
