@@ -1,3 +1,11 @@
+// Authentication check
+const token = localStorage.getItem('token');
+const user = JSON.parse(localStorage.getItem('user') || '{}');
+
+if (!token || !user.id) {
+    window.location.href = '../login.html';
+}
+
 // Sample notifications
 const notifications = [
   {

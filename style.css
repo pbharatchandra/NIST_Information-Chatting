@@ -209,6 +209,31 @@ body {
     text-decoration: underline;
 }
 
+/* ==================== HIDDEN ADMIN PANEL LINK ====================  */
+
+.admin-link-container {
+    position: relative;
+    min-height: 20px;
+}
+
+.admin-panel-link {
+    color: #007bff;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 4px;
+}
+
+.admin-panel-link:hover {
+    color: #dc3545;
+    background-color: rgba(220, 53, 69, 0.1);
+    text-decoration: underline;
+}
+
 /* ==================== MESSAGES ====================  */
 
 .error-message {

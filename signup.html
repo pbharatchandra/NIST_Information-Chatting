@@ -138,14 +138,15 @@
 
                 // Store token and user info
                 localStorage.setItem('token', data.token);
+                localStorage.setItem('authToken', data.token);
                 localStorage.setItem('user', JSON.stringify(data.user));
 
                 showSuccess('Account created successfully! Redirecting...');
                 setTimeout(() => {
                     if (data.user.user_type === 'student') {
-                        window.location.href = '/student_dashboard/dashboard.html';
+                        window.location.href = './student_dashboard/dashboard.html';
                     } else if (data.user.user_type === 'faculty') {
-                        window.location.href = '/faculty_dashboard/dashboard.html';
+                        window.location.href = './faculty_dashboard/dashboard.html';
                     } else if (data.user.user_type === 'alumni') {
                         window.location.href = '/alumni_dashboard/dashboard.html';
                     }

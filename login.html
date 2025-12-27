@@ -43,6 +43,10 @@
                     Don't have an account? <a href="signup.html">Sign up here</a>
                 </div>
 
+                <div style="margin-top: 20px; text-align: center; padding-top: 20px; border-top: 1px solid #eee;">
+                    <a href="admin_login.html" class="admin-panel-link" style="font-size: 13px;">🔐 Admin Login</a>
+                </div>
+
                 <div id="errorMessage" class="error-message" style="display: none;"></div>
                 <div id="successMessage" class="success-message" style="display: none;"></div>
             </div>
@@ -76,18 +80,39 @@
                     return;
                 }
 
-                // Store token and user info
+                // Store token and user info for all users
                 localStorage.setItem('token', data.token);
+                localStorage.setItem('authToken', data.token);
                 localStorage.setItem('user', JSON.stringify(data.user));
 
-                showSuccess('Login successful! Redirecting...');
-                setTimeout(() => {
-                    if (data.user.user_type === 'student') {
-                        window.location.href = '/student_dashboard/dashboard.html';
-                    } else {
-                        window.location.href = '/faculty_dashboard/dashboard.html';
-                    }
-                }, 1500);
+                // Check user type and redirect accordingly
+                if (data.user.user_type === 'admin') {
+                    // Admin should not be using regular login - redirect to admin login
+                    showError('Please use the Admin Login page');
+                    setTimeout(() => {
+                        window.location.href = 'admin_login.html';
+                    }, 1500);
+                } else if (data.user.user_type === 'student') {
+                    showSuccess('Login successful! Redirecting...');
+                    setTimeout(() => {
+                        window.location.href = './student_dashboard/dashboard.html';
+                    }, 1500);
+                } else if (data.user.user_type === 'faculty') {
+                    showSuccess('Login successful! Redirecting...');
+                    setTimeout(() => {
+                        window.location.href = './faculty_dashboard/dashboard.html';
+                    }, 1500);
+                } else if (data.user.user_type === 'alumni') {
+                    showSuccess('Login successful! Redirecting...');
+                    setTimeout(() => {
+                        window.location.href = './alumni_dashboard/dashboard.html';
+                    }, 1500);
+                } else {
+                    showSuccess('Login successful! Redirecting...');
+                    setTimeout(() => {
+                        window.location.href = './student_dashboard/dashboard.html';
+                    }, 1500);
+                }
             } catch (error) {
                 showError('Network error. Please try again.');
             }
@@ -107,6 +132,7 @@
             successMessage.style.display = 'block';
             errorMessage.style.display = 'none';
         }
+
     </script>
 </body>
 </html>
