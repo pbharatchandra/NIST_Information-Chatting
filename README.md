@@ -668,6 +668,11 @@ Your NIST College Chat Application is **complete, tested, and production-ready**
 ✅ Real-time: Socket.IO active  
 ✅ Notifications: All types working  
 
+### **Working On:**
+✅ Google/Github/LinkedIn Sign In Method and 
+✅ Profile Pictures Uploading
+
+
 ### **Status:**
 🚀 **READY FOR USE**
 
