@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -191,6 +192,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="dashboard-container">
         <!-- Sidebar -->
@@ -318,11 +320,13 @@
                     </div>
                     <div class="form-input-group" style="margin-bottom: 16px;">
                         <label>Message</label>
-                        <textarea id="referralMessage" placeholder="Tell them why you're interested..." style="resize: vertical; min-height: 100px;"></textarea>
+                        <textarea id="referralMessage" placeholder="Tell them why you're interested..."
+                            style="resize: vertical; min-height: 100px;"></textarea>
                     </div>
                     <div style="display: flex; gap: 12px;">
                         <button type="submit" class="btn btn-primary" style="flex: 1;">Send Request</button>
-                        <button type="button" class="btn btn-secondary" onclick="closeReferralModal()" style="flex: 1;">Cancel</button>
+                        <button type="button" class="btn btn-secondary" onclick="closeReferralModal()"
+                            style="flex: 1;">Cancel</button>
                     </div>
                 </form>
             </div>
@@ -336,7 +340,7 @@
         const API_URL = 'http://localhost:3001';
 
         if (!user || !token) {
-            window.location.href = '/login.html';
+            window.location.href = '/frontend/login.html';
         }
 
         let allAlumni = [];
@@ -474,7 +478,7 @@
             container.innerHTML = filtered.map(alumni => {
                 const initials = alumni.full_name.split(' ').map(n => n[0]).join('').toUpperCase();
                 const skills = alumni.skills.split(',').map(s => s.trim());
-                
+
                 return `
                     <div class="alumni-card">
                         <div class="alumni-card-header">
@@ -522,12 +526,12 @@
         // Search functionality
         document.getElementById('globalSearch').addEventListener('input', (e) => {
             const searchTerm = e.target.value.toLowerCase();
-            const filtered = allAlumni.filter(a => 
+            const filtered = allAlumni.filter(a =>
                 a.full_name.toLowerCase().includes(searchTerm) ||
                 a.current_company.toLowerCase().includes(searchTerm) ||
                 a.skills.toLowerCase().includes(searchTerm)
             );
-            
+
             const container = document.getElementById('alumniContainer');
             if (filtered.length === 0) {
                 container.innerHTML = `
@@ -543,7 +547,7 @@
             container.innerHTML = filtered.map(alumni => {
                 const initials = alumni.full_name.split(' ').map(n => n[0]).join('').toUpperCase();
                 const skills = alumni.skills.split(',').map(s => s.trim());
-                
+
                 return `
                     <div class="alumni-card">
                         <div class="alumni-card-header">
@@ -614,8 +618,9 @@
         function logout() {
             localStorage.removeItem('token');
             localStorage.removeItem('user');
-            window.location.href = '/login.html';
+            window.location.href = '/frontend/login.html';
         }
     </script>
 </body>
+
 </html>

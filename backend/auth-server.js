@@ -6,6 +6,8 @@ const jwt = require('jsonwebtoken');
 const cors = require('cors');
 const http = require('http');
 const path = require('path');
+const fs = require('fs');
+const multer = require('multer');
 
 const app = express();
 const server = http.createServer(app);
@@ -24,6 +26,38 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '../')));
 
+// Serve uploaded files
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
+
+// Configure multer for profile picture uploads
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        const uploadDir = path.join(__dirname, '../uploads/profile-pictures');
+        // Ensure directory exists
+        if (!fs.existsSync(uploadDir)) {
+            fs.mkdirSync(uploadDir, { recursive: true });
+        }
+        cb(null, uploadDir);
+    },
+    filename: (req, file, cb) => {
+        const uniqueName = `${req.user.id}-${Date.now()}${path.extname(file.originalname)}`;
+        cb(null, uniqueName);
+    }
+});
+
+const upload = multer({
+    storage,
+    limits: { fileSize: 500 * 1024 }, // 500KB limit
+    fileFilter: (req, file, cb) => {
+        const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+        if (allowedTypes.includes(file.mimetype)) {
+            cb(null, true);
+        } else {
+            cb(new Error('Invalid file type. Only JPEG, PNG, GIF, and WebP allowed.'));
+        }
+    }
+});
+
 // Database Connection
 const pool = new Pool({
     user: 'rasa_user',
@@ -41,7 +75,7 @@ const activeUsers = new Map();
 // Verify JWT Token
 const verifyToken = (req, res, next) => {
     const token = req.headers.authorization?.split(' ')[1];
-    
+
     if (!token) {
         return res.status(401).json({ error: 'No token provided' });
     }
@@ -151,9 +185,9 @@ app.post('/api/auth/login', async (req, res) => {
 
         // Generate JWT
         const token = jwt.sign(
-            { 
-                id: user.id, 
-                email: user.email, 
+            {
+                id: user.id,
+                email: user.email,
                 user_type: user.user_type
             },
             JWT_SECRET,
@@ -223,7 +257,7 @@ app.get('/api/profile', verifyToken, async (req, res) => {
             `SELECT id, email, full_name, user_type, phone, location, department, bio, 
                     github, portfolio, roll_number, batch, skills, qualifications, 
                     research_interests, office_hours, current_company, job_title, 
-                    linkedin, open_to_referrals, is_alumni, created_at
+                    linkedin, open_to_referrals, is_alumni, profile_picture, created_at
             FROM users WHERE id = $1`,
             [req.user.id]
         );
@@ -295,13 +329,77 @@ app.put('/api/profile', verifyToken, async (req, res) => {
     }
 });
 
+// Upload profile picture
+app.post('/api/profile/picture', verifyToken, upload.single('profile_picture'), async (req, res) => {
+    try {
+        if (!req.file) {
+            return res.status(400).json({ error: 'No file uploaded' });
+        }
+
+        const filePath = `/uploads/profile-pictures/${req.file.filename}`;
+
+        // Delete old profile picture if exists
+        const oldPic = await pool.query('SELECT profile_picture FROM users WHERE id = $1', [req.user.id]);
+        if (oldPic.rows[0]?.profile_picture) {
+            const oldPath = path.join(__dirname, '..', oldPic.rows[0].profile_picture);
+            fs.unlink(oldPath, (err) => {
+                if (err) console.log('Could not delete old profile picture:', err.message);
+            });
+        }
+
+        // Update database with new path
+        await pool.query(
+            'UPDATE users SET profile_picture = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2',
+            [filePath, req.user.id]
+        );
+
+        console.log(`✅ Profile picture updated for user ${req.user.id}: ${filePath}`);
+        res.json({ message: 'Profile picture updated successfully', profile_picture: filePath });
+    } catch (err) {
+        console.error('Profile picture upload error:', err.message);
+        res.status(500).json({ error: err.message || 'Server error' });
+    }
+});
+
+// Handle multer errors (file too large, invalid type)
+app.use((err, req, res, next) => {
+    if (err instanceof multer.MulterError) {
+        if (err.code === 'LIMIT_FILE_SIZE') {
+            return res.status(400).json({ error: 'File too large. Maximum size is 500KB.' });
+        }
+        return res.status(400).json({ error: err.message });
+    } else if (err) {
+        return res.status(400).json({ error: err.message });
+    }
+    next();
+});
+
+// Get any user's profile picture
+app.get('/api/profile/picture/:userId', verifyToken, async (req, res) => {
+    try {
+        const result = await pool.query(
+            'SELECT profile_picture FROM users WHERE id = $1',
+            [req.params.userId]
+        );
+
+        if (result.rows.length === 0) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        res.json({ profile_picture: result.rows[0].profile_picture });
+    } catch (err) {
+        console.error('Error fetching profile picture:', err.message);
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+
 // ==================== CHAT ENDPOINTS ====================
 
 // Get all users except current user
 app.get('/api/chat/users', verifyToken, async (req, res) => {
     try {
         const result = await pool.query(
-            'SELECT id, full_name, user_type FROM users WHERE id != $1 ORDER BY full_name',
+            'SELECT id, full_name, user_type, profile_picture FROM users WHERE id != $1 ORDER BY full_name',
             [req.user.id]
         );
         res.json(result.rows);

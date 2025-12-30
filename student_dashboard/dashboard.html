@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Dashboard - NIST Chat</title>
-    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="/frontend/style.css">
     <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
 </head>
+
 <body>
     <!-- Dashboard Header -->
     <div class="container">
@@ -18,9 +20,9 @@
                     <div class="role">Student</div>
                 </div>
                 <div style="display: flex; gap: 10px; align-items: center;">
-                    <a href="../profile.html" class="nav-link" title="Profile">👤</a>
-                    <a href="../documents.html" class="nav-link" title="Documents">📄</a>
-                    <a href="../alumni.html" class="nav-link" title="Alumni Network">🎓</a>
+                    <a href="/frontend/profile.html" class="nav-link" title="Profile">👤</a>
+                    <a href="/frontend/documents.html" class="nav-link" title="Documents">📄</a>
+                    <a href="/frontend/alumni.html" class="nav-link" title="Alumni Network">🎓</a>
                     <button class="logout-btn" onclick="logout()">Logout</button>
                 </div>
             </div>
@@ -33,6 +35,7 @@
                 transition: transform 0.2s;
                 display: inline-block;
             }
+
             .nav-link:hover {
                 transform: scale(1.2);
             }
@@ -83,13 +86,8 @@
 
                     <!-- Input Area -->
                     <div class="input-area">
-                        <input 
-                            type="text" 
-                            id="messageInput" 
-                            class="message-input" 
-                            placeholder="Type a message..."
-                            autocomplete="off"
-                        >
+                        <input type="text" id="messageInput" class="message-input" placeholder="Type a message..."
+                            autocomplete="off">
                         <button class="send-btn" onclick="sendMessage()">Send</button>
                     </div>
                 </div>
@@ -102,17 +100,13 @@
         <div class="modal-content">
             <span class="close" onclick="closeUserModal()">&times;</span>
             <h2>Start a Conversation</h2>
-            <input 
-                type="text" 
-                id="userSearchInput" 
-                class="user-search" 
-                placeholder="Search users..."
-                oninput="filterUsers(this.value)"
-            >
+            <input type="text" id="userSearchInput" class="user-search" placeholder="Search users..."
+                oninput="filterUsers(this.value)">
             <div id="userListModal" class="user-list-modal"></div>
         </div>
     </div>
 
     <script src="dashboard.js"></script>
 </body>
+
 </html>

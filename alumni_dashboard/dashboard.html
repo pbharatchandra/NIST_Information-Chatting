@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Alumni Dashboard - NIST Chat</title>
-    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="/frontend/style.css">
     <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
 </head>
+
 <body>
     <!-- Dashboard Header -->
     <div class="container">
@@ -18,9 +20,9 @@
                     <div class="role">Alumni</div>
                 </div>
                 <div style="display: flex; gap: 10px; align-items: center;">
-                    <a href="../profile.html" class="nav-link" title="Profile">👤</a>
-                    <a href="../documents.html" class="nav-link" title="Documents">📄</a>
-                    <a href="../alumni.html" class="nav-link" title="Alumni Network">🌐</a>
+                    <a href="/frontend/profile.html" class="nav-link" title="Profile">👤</a>
+                    <a href="/frontend/documents.html" class="nav-link" title="Documents">📄</a>
+                    <a href="/frontend/alumni.html" class="nav-link" title="Alumni Network">🌐</a>
                     <button class="logout-btn" onclick="logout()">Logout</button>
                 </div>
             </div>
@@ -33,6 +35,7 @@
                 transition: transform 0.2s;
                 display: inline-block;
             }
+
             .nav-link:hover {
                 transform: scale(1.2);
             }
@@ -66,7 +69,8 @@
                     <div class="empty-state">
                         <h3>🎓 Welcome to Alumni Network</h3>
                         <p>Connect with fellow alumni, explore career opportunities, and give back to NIST community</p>
-                        <div class="alumni-info" style="margin-top: 30px; padding: 20px; background: #f0f0f0; border-radius: 8px;">
+                        <div class="alumni-info"
+                            style="margin-top: 30px; padding: 20px; background: #f0f0f0; border-radius: 8px;">
                             <h4>Alumni Benefits:</h4>
                             <ul style="text-align: left; margin: 10px 0;">
                                 <li>💼 Browse job opportunities posted by alumni and faculty</li>
@@ -95,13 +99,8 @@
 
                     <!-- Message Input -->
                     <div class="message-input-area">
-                        <input 
-                            type="text" 
-                            id="messageInput" 
-                            class="message-input" 
-                            placeholder="Type a message..."
-                            autocomplete="off"
-                        >
+                        <input type="text" id="messageInput" class="message-input" placeholder="Type a message..."
+                            autocomplete="off">
                         <button onclick="sendMessage()" class="send-btn">Send</button>
                     </div>
                 </div>
@@ -113,12 +112,7 @@
     <div id="userModal" class="modal" style="display: none;">
         <div class="modal-content">
             <h2>Start a Chat</h2>
-            <input 
-                type="text" 
-                id="userSearchInput" 
-                class="search-input" 
-                placeholder="Search users..."
-            >
+            <input type="text" id="userSearchInput" class="search-input" placeholder="Search users...">
             <div id="userSearchResults" class="search-results"></div>
             <button class="close-btn" onclick="closeUserModal()">Close</button>
         </div>
@@ -129,4 +123,5 @@
 
     <script src="dashboard.js"></script>
 </body>
+
 </html>

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -257,6 +258,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="dashboard-container">
         <!-- Sidebar -->
@@ -315,12 +317,16 @@
                 <div id="uploadSectionContainer" style="display: none;">
                     <div class="upload-section">
                         <h2>📤 Upload Course Materials</h2>
-                        <div class="upload-area" id="uploadArea" ondrop="handleDrop(event)" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)">
-                            <input type="file" id="fileInput" multiple accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt,.zip" onchange="handleFileSelect(event)">
+                        <div class="upload-area" id="uploadArea" ondrop="handleDrop(event)"
+                            ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)">
+                            <input type="file" id="fileInput" multiple
+                                accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt,.zip"
+                                onchange="handleFileSelect(event)">
                             <div class="upload-area-content">
                                 <div class="upload-area-icon">📁</div>
                                 <div class="upload-area-text">Drag & drop files here or click to browse</div>
-                                <div class="upload-area-subtext">Supported: PDF, DOC, DOCX, PPT, PPTX, XLS, XLSX, TXT, ZIP</div>
+                                <div class="upload-area-subtext">Supported: PDF, DOC, DOCX, PPT, PPTX, XLS, XLSX, TXT,
+                                    ZIP</div>
                             </div>
                         </div>
                     </div>
@@ -372,7 +378,7 @@
         const API_URL = 'http://localhost:3001';
 
         if (!user || !token) {
-            window.location.href = '/login.html';
+            window.location.href = '/frontend/login.html';
         }
 
         let documents = [];
@@ -405,7 +411,7 @@
                     type: 'pdf',
                     size: '2.5 MB',
                     uploadedBy: 'Dr. Sharma',
-                    uploadedAt: new Date(Date.now() - 2*24*60*60*1000),
+                    uploadedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
                     sharedWith: ['all students']
                 },
                 {
@@ -415,7 +421,7 @@
                     type: 'pdf',
                     size: '1.2 MB',
                     uploadedBy: 'Dr. Sharma',
-                    uploadedAt: new Date(Date.now() - 5*24*60*60*1000),
+                    uploadedAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
                     sharedWith: ['all students']
                 },
                 {
@@ -425,7 +431,7 @@
                     type: 'doc',
                     size: '3.8 MB',
                     uploadedBy: 'Dr. Patel',
-                    uploadedAt: new Date(Date.now() - 1*24*60*60*1000),
+                    uploadedAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
                     sharedWith: ['all students']
                 },
                 {
@@ -435,7 +441,7 @@
                     type: 'presentation',
                     size: '15.4 MB',
                     uploadedBy: 'Dr. Desai',
-                    uploadedAt: new Date(Date.now() - 3*24*60*60*1000),
+                    uploadedAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
                     sharedWith: ['all students']
                 },
                 {
@@ -445,7 +451,7 @@
                     type: 'pdf',
                     size: '4.2 MB',
                     uploadedBy: 'Dr. Gupta',
-                    uploadedAt: new Date(Date.now() - 7*24*60*60*1000),
+                    uploadedAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
                     sharedWith: ['all students']
                 }
             ];
@@ -604,7 +610,7 @@
             selectedDocument = id;
             selectedUsers.clear();
             document.getElementById('docName').textContent = name;
-            
+
             const shareList = document.getElementById('shareList');
             // Load list of users/classes
             shareList.innerHTML = `
@@ -630,7 +636,7 @@
                     </div>
                 </div>
             `;
-            
+
             document.getElementById('shareModal').classList.add('active');
         }
 
@@ -671,8 +677,9 @@
         function logout() {
             localStorage.removeItem('token');
             localStorage.removeItem('user');
-            window.location.href = '/login.html';
+            window.location.href = '/frontend/login.html';
         }
     </script>
 </body>
+
 </html>

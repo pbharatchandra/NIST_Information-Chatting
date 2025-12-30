@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profile - NIST Professional Network</title>
     <link rel="stylesheet" href="modern-style.css">
 </head>
+
 <body>
     <div class="dashboard-container">
         <!-- Sidebar -->
@@ -32,7 +34,16 @@
             <div class="profile-content">
                 <!-- Profile Header -->
                 <div class="profile-header">
-                    <div class="profile-avatar" id="profileAvatar">-</div>
+                    <div class="profile-picture-container">
+                        <img id="profilePictureImg" src="" alt="Profile" class="profile-picture" style="display: none;">
+                        <div class="profile-avatar" id="profileAvatar">-</div>
+                        <label for="profilePictureInput" class="profile-picture-upload-btn"
+                            title="Change profile picture">
+                            📷
+                        </label>
+                        <input type="file" id="profilePictureInput" accept="image/jpeg,image/png,image/gif,image/webp"
+                            style="display: none;">
+                    </div>
                     <div class="profile-name" id="profileName">Loading...</div>
                     <div class="profile-role" id="profileRole">-</div>
                     <div style="margin-top: 8px; font-size: 14px; color: #075E54; font-weight: 500;">
@@ -55,13 +66,15 @@
                             </div>
                             <div class="form-input-group">
                                 <label>Roll Number (ID)</label>
-                                <input type="text" id="rollNumberBasic" placeholder="Your unique ID" readonly style="background: #F5F5F5;">
+                                <input type="text" id="rollNumberBasic" placeholder="Your unique ID" readonly
+                                    style="background: #F5F5F5;">
                             </div>
                         </div>
                         <div class="form-row">
                             <div class="form-input-group">
                                 <label>Email</label>
-                                <input type="email" id="email" placeholder="your@email.com" readonly style="background: #F5F5F5;">
+                                <input type="email" id="email" placeholder="your@email.com" readonly
+                                    style="background: #F5F5F5;">
                             </div>
                             <div class="form-input-group">
                                 <label>Phone Number</label>
@@ -88,7 +101,8 @@
                         <div class="form-row full">
                             <div class="form-input-group">
                                 <label>Bio</label>
-                                <textarea id="bio" placeholder="Tell about yourself, your interests, expertise..."></textarea>
+                                <textarea id="bio"
+                                    placeholder="Tell about yourself, your interests, expertise..."></textarea>
                             </div>
                         </div>
                     </div>
@@ -99,13 +113,15 @@
                         <div class="form-row full">
                             <div class="form-input-group">
                                 <label>Qualifications</label>
-                                <textarea id="qualifications" placeholder="e.g., M.Tech, Ph.D., Certifications..."></textarea>
+                                <textarea id="qualifications"
+                                    placeholder="e.g., M.Tech, Ph.D., Certifications..."></textarea>
                             </div>
                         </div>
                         <div class="form-row full">
                             <div class="form-input-group">
                                 <label>Research Interests</label>
-                                <textarea id="researchInterests" placeholder="Your research areas and interests..."></textarea>
+                                <textarea id="researchInterests"
+                                    placeholder="Your research areas and interests..."></textarea>
                             </div>
                         </div>
                         <div class="form-row full">
@@ -182,7 +198,8 @@
                     <!-- Action Buttons -->
                     <div class="profile-actions">
                         <button type="submit" class="btn btn-primary">💾 Save Changes</button>
-                        <button type="button" class="btn btn-secondary" onclick="goToDashboard()">← Back to Chat</button>
+                        <button type="button" class="btn btn-secondary" onclick="goToDashboard()">← Back to
+                            Chat</button>
                     </div>
                 </form>
             </div>
@@ -208,7 +225,7 @@
         const API_URL = 'http://localhost:3001';
 
         if (!user || !token) {
-            window.location.href = '/login.html';
+            window.location.href = '/frontend/login.html';
         }
 
         // Initialize
@@ -221,7 +238,7 @@
             // Set roll number display from localStorage immediately
             document.getElementById('profileRollNumber').textContent = user.roll_number || '-';
             document.getElementById('rollNumberBasic').value = user.roll_number || '';
-            
+
             // Populate header from localStorage immediately
             document.getElementById('fullName').value = user.full_name || '';
             document.getElementById('email').value = user.email || '';
@@ -269,6 +286,14 @@
                 document.getElementById('github').value = profile.github || '';
                 document.getElementById('portfolio').value = profile.portfolio || '';
 
+                // Display profile picture if exists
+                if (profile.profile_picture) {
+                    const img = document.getElementById('profilePictureImg');
+                    img.src = API_URL + profile.profile_picture;
+                    img.style.display = 'block';
+                    document.getElementById('profileAvatar').style.display = 'none';
+                }
+
                 if (user.user_type === 'faculty') {
                     document.getElementById('department').value = profile.department || '';
                     document.getElementById('qualifications').value = profile.qualifications || '';
@@ -294,6 +319,56 @@
                 console.error('Error loading profile:', error);
             }
         }
+
+        // Handle profile picture upload
+        document.getElementById('profilePictureInput').addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            // Validate file size (500KB)
+            if (file.size > 500 * 1024) {
+                alert('❌ File too large! Maximum size is 500KB.');
+                e.target.value = '';
+                return;
+            }
+
+            // Show preview immediately
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const img = document.getElementById('profilePictureImg');
+                img.src = event.target.result;
+                img.style.display = 'block';
+                document.getElementById('profileAvatar').style.display = 'none';
+            };
+            reader.readAsDataURL(file);
+
+            // Upload to server
+            const formData = new FormData();
+            formData.append('profile_picture', file);
+
+            try {
+                const response = await fetch(`${API_URL}/api/profile/picture`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    alert('✅ Profile picture updated!');
+                    // Update the image source with the server path
+                    document.getElementById('profilePictureImg').src = API_URL + data.profile_picture;
+                } else {
+                    alert('❌ Error: ' + data.error);
+                }
+            } catch (error) {
+                console.error('Error uploading profile picture:', error);
+                alert('❌ Error uploading profile picture');
+            }
+        });
 
 
         function updateProfileHeader() {
@@ -327,8 +402,14 @@
             users.forEach(u => {
                 const userEl = document.createElement('div');
                 userEl.className = 'conversation-item';
+
+                // Use profile picture if available, otherwise show initials
+                const avatarContent = u.profile_picture
+                    ? `<img src="${API_URL}${u.profile_picture}" alt="${u.full_name}" class="avatar-img">`
+                    : u.full_name[0].toUpperCase();
+
                 userEl.innerHTML = `
-                    <div class="avatar">${u.full_name[0].toUpperCase()}</div>
+                    <div class="avatar">${avatarContent}</div>
                     <div class="conversation-info" style="flex: 1;">
                         <div class="conversation-name">${u.full_name}</div>
                         <div class="conversation-preview">${u.user_type}</div>
@@ -342,9 +423,9 @@
         function viewUserProfile(user) {
             const modal = document.getElementById('userProfileModal');
             const content = document.getElementById('userProfileContent');
-            
+
             const initials = user.full_name.split(' ').map(n => n[0]).join('').toUpperCase();
-            
+
             content.innerHTML = `
                 <div style="text-align: center; padding: 20px;">
                     <div class="avatar" style="width: 100px; height: 100px; font-size: 40px; margin: 0 auto 20px;">
@@ -391,7 +472,7 @@
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
                 const users = await response.json();
-                const filtered = users.filter(u => 
+                const filtered = users.filter(u =>
                     u.full_name.toLowerCase().includes(searchTerm)
                 );
                 displayUsersList(filtered);
@@ -469,8 +550,9 @@
         function logout() {
             localStorage.removeItem('token');
             localStorage.removeItem('user');
-            window.location.href = '/login.html';
+            window.location.href = '/frontend/login.html';
         }
     </script>
 </body>
+
 </html>

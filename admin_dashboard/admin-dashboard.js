@@ -30,7 +30,7 @@ function setupEventListeners() {
             e.preventDefault();
             const section = item.dataset.section;
             switchSection(section);
-            
+
             document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
             item.classList.add('active');
         });
@@ -114,7 +114,7 @@ function switchSection(section) {
     const targetSection = document.getElementById(`${section}-section`);
     if (targetSection) {
         targetSection.classList.add('active');
-        
+
         if (section === 'users') {
             loadUsers();
         } else if (section === 'statistics') {
@@ -145,10 +145,10 @@ async function loadStatistics() {
         if (!response.ok) throw new Error('Failed to load statistics');
 
         const data = await response.json();
-        
+
         // Update stat cards
         document.getElementById('totalUsersCount').textContent = data.total_users;
-        
+
         // Reset counts
         document.getElementById('studentCount').textContent = '0';
         document.getElementById('facultyCount').textContent = '0';
@@ -232,7 +232,7 @@ function displayUsers() {
     pageUsers.forEach(user => {
         const row = document.createElement('tr');
         const createdAt = new Date(user.created_at).toLocaleDateString();
-        
+
         row.innerHTML = `
             <td>${user.id}</td>
             <td>${user.full_name}</td>
@@ -261,13 +261,13 @@ function displayUsers() {
 function filterUsers() {
     const filterValue = document.getElementById('typeFilter').value;
     currentPage = 1;
-    
+
     if (filterValue === '') {
         filteredUsers = [...allUsers];
     } else {
         filteredUsers = allUsers.filter(user => user.user_type === filterValue);
     }
-    
+
     displayUsers();
 }
 
@@ -275,17 +275,17 @@ function filterUsers() {
 function searchUsers() {
     const searchTerm = document.getElementById('searchInput').value.toLowerCase();
     currentPage = 1;
-    
+
     if (searchTerm === '') {
         filteredUsers = [...allUsers];
     } else {
-        filteredUsers = allUsers.filter(user => 
+        filteredUsers = allUsers.filter(user =>
             user.full_name.toLowerCase().includes(searchTerm) ||
             user.email.toLowerCase().includes(searchTerm) ||
             (user.roll_number && user.roll_number.toLowerCase().includes(searchTerm))
         );
     }
-    
+
     displayUsers();
 }
 
@@ -325,7 +325,7 @@ async function createUser(e) {
 
         showMessage('User created successfully!', 'success');
         document.getElementById('createUserForm').reset();
-        
+
         // Reload users list
         await loadUsers();
         await loadDashboard();
@@ -338,7 +338,7 @@ async function createUser(e) {
 // Open edit modal
 async function openEditModal(userId) {
     editingUserId = userId;
-    
+
     try {
         const response = await fetch(`${API_URL}/users/${userId}`, {
             headers: { 'Authorization': `Bearer ${token}` }
@@ -422,7 +422,7 @@ async function saveUserChanges(e) {
 
         showMessage('User updated successfully!', 'success');
         closeEditModal();
-        
+
         // Reload users list
         await loadUsers();
         await loadDashboard();
@@ -459,7 +459,7 @@ async function confirmDelete() {
 
         showMessage('User deleted successfully!', 'success');
         closeDeleteModal();
-        
+
         // Reload users list
         await loadUsers();
         await loadDashboard();
@@ -474,7 +474,7 @@ function showMessage(message, type) {
     const messageBox = document.getElementById('createMessage');
     messageBox.textContent = message;
     messageBox.className = `message-box ${type}`;
-    
+
     setTimeout(() => {
         messageBox.classList.remove('success', 'error');
     }, 5000);
@@ -484,5 +484,5 @@ function showMessage(message, type) {
 function logout() {
     localStorage.removeItem('authToken');
     localStorage.removeItem('user');
-    window.location.href = '/login.html';
+    window.location.href = '/frontend/login.html';
 }

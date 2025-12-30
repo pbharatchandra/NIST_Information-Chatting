@@ -6,7 +6,7 @@ const user = JSON.parse(localStorage.getItem('user'));
 const token = localStorage.getItem('token');
 
 if (!user || !token) {
-    window.location.href = '/login.html';
+    window.location.href = '/frontend/login.html';
 }
 
 // Initialize Socket.IO
@@ -40,18 +40,47 @@ const userListModal = document.getElementById('userListModal');
 // Initialize
 window.addEventListener('load', async () => {
     userName.textContent = user.full_name;
-    
+
+    // Load and display profile picture
+    await loadProfilePicture();
+
     // Request notification permission
     requestNotificationPermission();
-    
+
     await loadUsers();
     await loadConversations();
-    
+
     socket.emit('user_joined', {
         user_id: user.id,
         full_name: user.full_name
     });
 });
+
+// Load current user's profile picture
+async function loadProfilePicture() {
+    try {
+        const response = await fetch(`${API_URL}/api/profile`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (response.ok) {
+            const profile = await response.json();
+            if (profile.profile_picture) {
+                const userInfoEl = document.querySelector('.user-info');
+                if (userInfoEl) {
+                    const existingAvatar = userInfoEl.querySelector('.user-profile-pic');
+                    if (!existingAvatar) {
+                        const picContainer = document.createElement('div');
+                        picContainer.className = 'user-profile-pic';
+                        picContainer.innerHTML = `<img src="${API_URL}${profile.profile_picture}" alt="Profile" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid #25D366;">`;
+                        userInfoEl.insertBefore(picContainer, userInfoEl.firstChild);
+                    }
+                }
+            }
+        }
+    } catch (error) {
+        console.error('Error loading profile picture:', error);
+    }
+}
 
 // ==================== SOCKET.IO EVENTS ====================
 
@@ -73,19 +102,19 @@ socket.on('receive_message', (data) => {
         messages[data.conversation_id] = [];
     }
     messages[data.conversation_id].push(data);
-    
+
     // Update unread count if message is not from current user
     if (data.sender_id !== user.id) {
         if (!unreadCount[data.conversation_id]) {
             unreadCount[data.conversation_id] = 0;
         }
         unreadCount[data.conversation_id]++;
-        
+
         // Show notification
         showNotification(data);
         playNotificationSound();
     }
-    
+
     if (selectedConversation?.id === data.conversation_id) {
         displayMessages();
         scrollToBottom();
@@ -129,7 +158,7 @@ async function loadConversations() {
 
 function displayConversations() {
     conversationsList.innerHTML = '';
-    
+
     if (allConversations.length === 0) {
         conversationsList.innerHTML = '<p style="text-align: center; color: #999; padding: 20px;">No conversations yet</p>';
         return;
@@ -157,16 +186,22 @@ function displayConversations() {
 
 function updateOnlineUsers() {
     onlineUsersList.innerHTML = '';
-    
-    allUsers.forEach(user => {
-        if (activeUsers.has(user.id)) {
+
+    allUsers.forEach(u => {
+        if (activeUsers.has(u.id)) {
             const userEl = document.createElement('div');
             userEl.className = 'online-user';
+
+            const avatarContent = u.profile_picture
+                ? `<img src="${API_URL}${u.profile_picture}" alt="${u.full_name}" style="width: 24px; height: 24px; border-radius: 50%; object-fit: cover;">`
+                : `<span class="user-initial">${u.full_name[0].toUpperCase()}</span>`;
+
             userEl.innerHTML = `
                 <span class="status-dot"></span>
-                <span>${user.full_name}</span>
+                ${avatarContent}
+                <span>${u.full_name}</span>
             `;
-            userEl.addEventListener('click', () => startConversation(user));
+            userEl.addEventListener('click', () => startConversation(u));
             onlineUsersList.appendChild(userEl);
         }
     });
@@ -178,7 +213,7 @@ function updateOnlineUsers() {
 
 async function selectConversation(conversation) {
     selectedConversation = conversation;
-    
+
     if (!messages[conversation.id]) {
         await loadMessages(conversation.id);
     }
@@ -186,7 +221,7 @@ async function selectConversation(conversation) {
     displayConversations();
     displayMessages();
     updateUserStatus();
-    
+
     chatWindow.style.display = 'flex';
     noChatSelected.style.display = 'none';
 
@@ -217,7 +252,7 @@ async function startConversation(selectedUser) {
 
         selectedConversation = conversation;
         closeUserModal();
-        
+
         if (!messages[conversation.id]) {
             await loadMessages(conversation.id);
         }
@@ -252,9 +287,9 @@ function displayMessages() {
         msgEl.className = 'message';
         msgEl.classList.add(msg.sender_id === user.id ? 'sent' : 'received');
 
-        const time = new Date(msg.created_at).toLocaleTimeString([], { 
-            hour: '2-digit', 
-            minute: '2-digit' 
+        const time = new Date(msg.created_at).toLocaleTimeString([], {
+            hour: '2-digit',
+            minute: '2-digit'
         });
 
         msgEl.innerHTML = `
@@ -326,8 +361,8 @@ function filterUsers(searchTerm) {
 function displayUserList(searchTerm = '') {
     userListModal.innerHTML = '';
 
-    const filteredUsers = allUsers.filter(user =>
-        user.full_name.toLowerCase().includes(searchTerm.toLowerCase())
+    const filteredUsers = allUsers.filter(u =>
+        u.full_name.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     if (filteredUsers.length === 0) {
@@ -335,18 +370,24 @@ function displayUserList(searchTerm = '') {
         return;
     }
 
-    filteredUsers.forEach(user => {
+    filteredUsers.forEach(u => {
         const userEl = document.createElement('div');
         userEl.className = 'user-item-modal';
-        const isOnline = activeUsers.has(user.id);
+        const isOnline = activeUsers.has(u.id);
+
+        const avatarContent = u.profile_picture
+            ? `<img src="${API_URL}${u.profile_picture}" alt="${u.full_name}" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; margin-right: 10px;">`
+            : `<div style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #25D366, #128C7E); display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; margin-right: 10px;">${u.full_name[0].toUpperCase()}</div>`;
+
         userEl.innerHTML = `
+            ${avatarContent}
             <div>
-                <strong>${user.full_name}</strong>
-                <p>${user.user_type}</p>
+                <strong>${u.full_name}</strong>
+                <p>${u.user_type}</p>
             </div>
             <span class="status-dot" style="background: ${isOnline ? '#4caf50' : '#ccc'};"></span>
         `;
-        userEl.addEventListener('click', () => startConversation(user));
+        userEl.addEventListener('click', () => startConversation(u));
         userListModal.appendChild(userEl);
     });
 }
@@ -354,7 +395,7 @@ function displayUserList(searchTerm = '') {
 function logout() {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
-    window.location.href = '/login.html';
+    window.location.href = '/frontend/login.html';
 }
 
 // ==================== NOTIFICATION FUNCTIONS ====================
@@ -370,16 +411,16 @@ function showNotification(messageData) {
         </div>
         <button class="notification-close" onclick="this.parentElement.remove();">×</button>
     `;
-    
+
     document.body.appendChild(notification);
-    
+
     // Auto-remove after 5 seconds
     setTimeout(() => {
         if (notification.parentElement) {
             notification.remove();
         }
     }, 5000);
-    
+
     // Also show browser notification if permitted
     if ('Notification' in window && Notification.permission === 'granted') {
         new Notification(`New message from ${messageData.full_name}`, {
@@ -395,16 +436,16 @@ function playNotificationSound() {
         const audioContext = new (window.AudioContext || window.webkitAudioContext)();
         const oscillator = audioContext.createOscillator();
         const gainNode = audioContext.createGain();
-        
+
         oscillator.connect(gainNode);
         gainNode.connect(audioContext.destination);
-        
+
         oscillator.frequency.value = 800;
         oscillator.type = 'sine';
-        
+
         gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
         gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
-        
+
         oscillator.start(audioContext.currentTime);
         oscillator.stop(audioContext.currentTime + 0.5);
     } catch (error) {
@@ -419,17 +460,17 @@ function markConversationAsRead(conversationId) {
 
 function updateConversationsList() {
     conversationsList.innerHTML = '';
-    
+
     allConversations.forEach(conv => {
         const convEl = document.createElement('div');
         convEl.className = 'conversation-item';
         if (selectedConversation?.id === conv.id) {
             convEl.classList.add('active');
         }
-        
+
         const unread = unreadCount[conv.id] || 0;
         const badge = unread > 0 ? `<span class="unread-badge">${unread}</span>` : '';
-        
+
         convEl.innerHTML = `
             <div style="flex: 1;">
                 <strong>${escapeHtml(conv.display_name || conv.conversation_name)}</strong>
@@ -439,7 +480,7 @@ function updateConversationsList() {
             </div>
             ${badge}
         `;
-        
+
         convEl.addEventListener('click', () => selectConversation(conv));
         conversationsList.appendChild(convEl);
     });

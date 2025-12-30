@@ -6,7 +6,7 @@ const user = JSON.parse(localStorage.getItem('user'));
 const token = localStorage.getItem('token');
 
 if (!user || !token) {
-    window.location.href = '/login.html';
+    window.location.href = '/frontend/login.html';
 }
 
 // Check if user is alumni
@@ -49,19 +49,48 @@ const userModal = document.getElementById('userModal');
 // Initialize
 window.addEventListener('load', async () => {
     userName.textContent = user.full_name;
-    
+
+    // Load and display profile picture
+    await loadProfilePicture();
+
     // Request notification permission
     requestNotificationPermission();
-    
+
     await loadUsers();
     await loadConversations();
-    
+
     socket.emit('user_joined', {
         user_id: user.id,
         full_name: user.full_name,
         user_type: 'alumni'
     });
 });
+
+// Load current user's profile picture
+async function loadProfilePicture() {
+    try {
+        const response = await fetch(`${API_URL}/api/profile`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (response.ok) {
+            const profile = await response.json();
+            if (profile.profile_picture) {
+                const userInfoEl = document.querySelector('.user-info');
+                if (userInfoEl) {
+                    const existingAvatar = userInfoEl.querySelector('.user-profile-pic');
+                    if (!existingAvatar) {
+                        const picContainer = document.createElement('div');
+                        picContainer.className = 'user-profile-pic';
+                        picContainer.innerHTML = `<img src="${API_URL}${profile.profile_picture}" alt="Profile" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid #25D366;">`;
+                        userInfoEl.insertBefore(picContainer, userInfoEl.firstChild);
+                    }
+                }
+            }
+        }
+    } catch (error) {
+        console.error('Error loading profile picture:', error);
+    }
+}
 
 // ==================== SOCKET.IO EVENTS ====================
 
@@ -83,19 +112,19 @@ socket.on('receive_message', (data) => {
         messages[data.conversation_id] = [];
     }
     messages[data.conversation_id].push(data);
-    
+
     // Update unread count if message is not from current user
     if (data.sender_id !== user.id) {
         if (!unreadCount[data.conversation_id]) {
             unreadCount[data.conversation_id] = 0;
         }
         unreadCount[data.conversation_id]++;
-        
+
         // Show notification
         showNotification(data);
         playNotificationSound();
     }
-    
+
     if (selectedConversation?.id === data.conversation_id) {
         displayMessages();
         scrollToBottom();
@@ -139,7 +168,7 @@ async function loadConversations() {
 
 function displayConversations() {
     conversationsList.innerHTML = '';
-    
+
     if (allConversations.length === 0) {
         conversationsList.innerHTML = '<p style="text-align: center; color: #999; padding: 20px;">No conversations yet</p>';
         return;
@@ -173,15 +202,22 @@ function displayConversations() {
 
 function updateOnlineUsers() {
     onlineUsersList.innerHTML = '';
-    
+
     allUsers.forEach(usr => {
         if (activeUsers.has(usr.id) && usr.id !== user.id) {
             const userEl = document.createElement('div');
             userEl.className = 'online-user';
-            const userRole = usr.user_type === 'alumni' ? ' (Alumni)' : 
-                            usr.user_type === 'faculty' ? ' (Faculty)' : '';
+            const userRole = usr.user_type === 'alumni' ? ' (Alumni)' :
+                usr.user_type === 'faculty' ? ' (Faculty)' : '';
+
+            // Use profile picture if available
+            const avatarContent = usr.profile_picture
+                ? `<img src="${API_URL}${usr.profile_picture}" alt="${usr.full_name}" style="width: 24px; height: 24px; border-radius: 50%; object-fit: cover;">`
+                : `<span class="user-initial">${usr.full_name[0].toUpperCase()}</span>`;
+
             userEl.innerHTML = `
                 <span class="status-dot"></span>
+                ${avatarContent}
                 <span>${usr.full_name}${userRole}</span>
             `;
             userEl.addEventListener('click', () => startConversation(usr));
@@ -196,7 +232,7 @@ function updateOnlineUsers() {
 
 async function selectConversation(conversation) {
     selectedConversation = conversation;
-    
+
     if (!messages[conversation.id]) {
         await loadMessages(conversation.id);
     }
@@ -204,14 +240,14 @@ async function selectConversation(conversation) {
     displayConversations();
     displayMessages();
     updateUserStatus();
-    
+
     chatWindow.style.display = 'flex';
     noChatSelected.style.display = 'none';
 
     socket.emit('join_conversation', { conversation_id: conversation.id });
     messageInput.focus();
     scrollToBottom();
-    
+
     // Mark as read
     markConversationAsRead(conversation.id);
 }
@@ -251,7 +287,7 @@ async function loadMessages(conversationId) {
 
 function displayMessages() {
     messagesArea.innerHTML = '';
-    
+
     if (!selectedConversation || !messages[selectedConversation.id]) {
         return;
     }
@@ -259,26 +295,26 @@ function displayMessages() {
     messages[selectedConversation.id].forEach(msg => {
         const messageEl = document.createElement('div');
         messageEl.className = `message ${msg.sender_id === user.id ? 'sent' : 'received'}`;
-        
-        const timestamp = new Date(msg.created_at).toLocaleTimeString([], { 
-            hour: '2-digit', 
-            minute: '2-digit' 
+
+        const timestamp = new Date(msg.created_at).toLocaleTimeString([], {
+            hour: '2-digit',
+            minute: '2-digit'
         });
-        
+
         messageEl.innerHTML = `
             <div class="message-content">
                 <p>${msg.content}</p>
                 <small>${timestamp}</small>
             </div>
         `;
-        
+
         messagesArea.appendChild(messageEl);
     });
 }
 
 function updateUserStatus() {
     if (!selectedConversation) return;
-    
+
     const isOnline = activeUsers.has(selectedConversation.other_user_id);
     userStatus.textContent = isOnline ? '● Online' : '● Offline';
     userStatus.style.color = isOnline ? '#25D366' : '#999';
@@ -286,7 +322,7 @@ function updateUserStatus() {
 
 async function sendMessage() {
     const content = messageInput.value.trim();
-    
+
     if (!content || !selectedConversation) return;
 
     try {
@@ -305,15 +341,15 @@ async function sendMessage() {
         if (response.ok) {
             messageInput.value = '';
             const message = await response.json();
-            
+
             if (!messages[selectedConversation.id]) {
                 messages[selectedConversation.id] = [];
             }
             messages[selectedConversation.id].push(message);
-            
+
             displayMessages();
             scrollToBottom();
-            
+
             socket.emit('send_message', {
                 conversation_id: selectedConversation.id,
                 ...message
@@ -340,14 +376,14 @@ function openUserModal() {
     userModal.style.display = 'block';
     const searchInput = document.getElementById('userSearchInput');
     const results = document.getElementById('userSearchResults');
-    
+
     results.innerHTML = '';
     allUsers.forEach(usr => {
         if (usr.id !== user.id) {
             const userEl = document.createElement('div');
             userEl.className = 'user-search-result';
-            const userRole = usr.user_type === 'alumni' ? ' (Alumni)' : 
-                            usr.user_type === 'faculty' ? ' (Faculty)' : '';
+            const userRole = usr.user_type === 'alumni' ? ' (Alumni)' :
+                usr.user_type === 'faculty' ? ' (Faculty)' : '';
             userEl.innerHTML = `
                 <div>
                     <h4>${usr.full_name}${userRole}</h4>
@@ -358,21 +394,21 @@ function openUserModal() {
             results.appendChild(userEl);
         }
     });
-    
+
     searchInput.addEventListener('input', (e) => {
         const query = e.target.value.toLowerCase();
-        const filteredUsers = allUsers.filter(usr => 
-            usr.id !== user.id && 
-            (usr.full_name.toLowerCase().includes(query) || 
-             usr.email.toLowerCase().includes(query))
+        const filteredUsers = allUsers.filter(usr =>
+            usr.id !== user.id &&
+            (usr.full_name.toLowerCase().includes(query) ||
+                usr.email.toLowerCase().includes(query))
         );
-        
+
         results.innerHTML = '';
         filteredUsers.forEach(usr => {
             const userEl = document.createElement('div');
             userEl.className = 'user-search-result';
-            const userRole = usr.user_type === 'alumni' ? ' (Alumni)' : 
-                            usr.user_type === 'faculty' ? ' (Faculty)' : '';
+            const userRole = usr.user_type === 'alumni' ? ' (Alumni)' :
+                usr.user_type === 'faculty' ? ' (Faculty)' : '';
             userEl.innerHTML = `
                 <div>
                     <h4>${usr.full_name}${userRole}</h4>
@@ -402,7 +438,7 @@ function showToast(message, type = 'info') {
     const toast = document.getElementById('toast');
     toast.textContent = message;
     toast.className = `toast show ${type}`;
-    
+
     setTimeout(() => {
         toast.classList.remove('show');
     }, 3000);
@@ -429,16 +465,16 @@ function playNotificationSound() {
     const audioContext = new (window.AudioContext || window.webkitAudioContext)();
     const oscillator = audioContext.createOscillator();
     const gainNode = audioContext.createGain();
-    
+
     oscillator.connect(gainNode);
     gainNode.connect(audioContext.destination);
-    
+
     oscillator.frequency.value = 800;
     oscillator.type = 'sine';
-    
+
     gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
     gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
-    
+
     oscillator.start(audioContext.currentTime);
     oscillator.stop(audioContext.currentTime + 0.5);
 }
@@ -456,7 +492,7 @@ function logout() {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     socket.emit('user_left', { user_id: user.id });
-    window.location.href = '/login.html';
+    window.location.href = '/frontend/login.html';
 }
 
 function goToDashboard() {
