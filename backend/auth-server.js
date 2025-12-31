@@ -26,8 +26,8 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '../')));
 
-// Serve uploaded files
-app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
+// NOTE: Profile pictures are now served through a protected endpoint (see /api/profile/image/:filename)
+// This ensures only authenticated users can access profile pictures
 
 // Configure multer for profile picture uploads
 const storage = multer.diskStorage({
@@ -336,7 +336,7 @@ app.post('/api/profile/picture', verifyToken, upload.single('profile_picture'), 
             return res.status(400).json({ error: 'No file uploaded' });
         }
 
-        const filePath = `/uploads/profile-pictures/${req.file.filename}`;
+        const filePath = `/api/profile/image/${req.file.filename}`;
 
         // Delete old profile picture if exists
         const oldPic = await pool.query('SELECT profile_picture FROM users WHERE id = $1', [req.user.id]);
@@ -358,6 +358,24 @@ app.post('/api/profile/picture', verifyToken, upload.single('profile_picture'), 
     } catch (err) {
         console.error('Profile picture upload error:', err.message);
         res.status(500).json({ error: err.message || 'Server error' });
+    }
+});
+
+// Serve profile pictures (PROTECTED - requires authentication)
+app.get('/api/profile/image/:filename', verifyToken, (req, res) => {
+    const filename = req.params.filename;
+
+    // Security: Prevent directory traversal attacks
+    if (filename.includes('..') || filename.includes('/') || filename.includes('\\')) {
+        return res.status(400).json({ error: 'Invalid filename' });
+    }
+
+    const filePath = path.join(__dirname, '../uploads/profile-pictures', filename);
+
+    if (fs.existsSync(filePath)) {
+        res.sendFile(filePath);
+    } else {
+        res.status(404).json({ error: 'Image not found' });
     }
 });
 

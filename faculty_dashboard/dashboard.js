@@ -56,7 +56,7 @@ window.addEventListener('load', async () => {
     });
 });
 
-// Load current user's profile picture
+// Load current user's profile picture (with authentication)
 async function loadProfilePicture() {
     try {
         const response = await fetch(`${API_URL}/api/profile`, {
@@ -65,14 +65,23 @@ async function loadProfilePicture() {
         if (response.ok) {
             const profile = await response.json();
             if (profile.profile_picture) {
-                const userInfoEl = document.querySelector('.user-info');
-                if (userInfoEl) {
-                    const existingAvatar = userInfoEl.querySelector('.user-profile-pic');
-                    if (!existingAvatar) {
-                        const picContainer = document.createElement('div');
-                        picContainer.className = 'user-profile-pic';
-                        picContainer.innerHTML = `<img src="${API_URL}${profile.profile_picture}" alt="Profile" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid #25D366;">`;
-                        userInfoEl.insertBefore(picContainer, userInfoEl.firstChild);
+                // Fetch image with authentication
+                const imgResponse = await fetch(`${API_URL}${profile.profile_picture}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (imgResponse.ok) {
+                    const blob = await imgResponse.blob();
+                    const imageUrl = URL.createObjectURL(blob);
+
+                    const userInfoEl = document.querySelector('.user-info');
+                    if (userInfoEl) {
+                        const existingAvatar = userInfoEl.querySelector('.user-profile-pic');
+                        if (!existingAvatar) {
+                            const picContainer = document.createElement('div');
+                            picContainer.className = 'user-profile-pic';
+                            picContainer.innerHTML = `<img src="${imageUrl}" alt="Profile" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid #25D366;">`;
+                            userInfoEl.insertBefore(picContainer, userInfoEl.firstChild);
+                        }
                     }
                 }
             }

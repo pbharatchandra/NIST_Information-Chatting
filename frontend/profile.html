@@ -228,6 +228,24 @@
             window.location.href = '/frontend/login.html';
         }
 
+        // Helper function to load images from protected endpoints
+        async function loadAuthenticatedImage(imgElement, imageUrl) {
+            try {
+                const response = await fetch(API_URL + imageUrl, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (response.ok) {
+                    const blob = await response.blob();
+                    imgElement.src = URL.createObjectURL(blob);
+                    imgElement.style.display = 'block';
+                    return true;
+                }
+            } catch (error) {
+                console.error('Error loading authenticated image:', error);
+            }
+            return false;
+        }
+
         // Initialize
         window.addEventListener('load', async () => {
             // Show appropriate form sections
@@ -286,12 +304,13 @@
                 document.getElementById('github').value = profile.github || '';
                 document.getElementById('portfolio').value = profile.portfolio || '';
 
-                // Display profile picture if exists
+                // Display profile picture if exists (using authenticated fetch)
                 if (profile.profile_picture) {
                     const img = document.getElementById('profilePictureImg');
-                    img.src = API_URL + profile.profile_picture;
-                    img.style.display = 'block';
-                    document.getElementById('profileAvatar').style.display = 'none';
+                    const loaded = await loadAuthenticatedImage(img, profile.profile_picture);
+                    if (loaded) {
+                        document.getElementById('profileAvatar').style.display = 'none';
+                    }
                 }
 
                 if (user.user_type === 'faculty') {
